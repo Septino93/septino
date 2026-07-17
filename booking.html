@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#17326b">
+  <title>Daftar Konsultasi | Septino</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="booking.css">
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+  <main class="booking-page">
+    <header class="booking-header">
+      <div class="booking-header-inner">
+        <a id="bookingBack" class="booking-back" href="konsultasi.html" aria-label="Kembali" title="Kembali"><i data-lucide="arrow-left"></i></a>
+        <span class="eyebrow">DAFTAR KONSULTASI</span>
+        <h1>Lengkapi data Anda</h1>
+        <p>Setelah pendaftaran tercatat, pengaturan jadwal dilanjutkan melalui WhatsApp.</p>
+      </div>
+    </header>
+
+    <section class="booking-content">
+      <article class="booking-card">
+        <div class="booking-service">
+          <span class="booking-service-icon"><i data-lucide="clipboard-pen-line"></i></span>
+          <div><span>Layanan Konsultasi</span><strong id="serviceName">Konsultasi</strong></div>
+        </div>
+
+        <form id="bookingForm" class="booking-form" novalidate>
+          <div class="booking-field">
+            <label for="name">Nama lengkap</label>
+            <input id="name" name="name" autocomplete="name" required placeholder="Masukkan nama lengkap">
+          </div>
+          <div class="booking-field">
+            <label for="email">Email</label>
+            <input id="email" name="email" type="email" autocomplete="email" required placeholder="nama@email.com">
+          </div>
+          <div class="booking-field">
+            <label for="whatsapp">Nomor WhatsApp</label>
+            <input id="whatsapp" name="whatsapp" inputmode="tel" autocomplete="tel" required placeholder="Contoh: 0812 3456 7890">
+          </div>
+          <div id="simulationBox" class="booking-simulation">
+            <strong>Ringkasan hasil simulasi</strong>
+            <p id="simulationText"></p>
+          </div>
+          <div id="bookingAlert" class="booking-alert"></div>
+          <div class="booking-note"><i data-lucide="lock-keyhole"></i><span>Data Anda digunakan untuk proses pendaftaran konsultasi dan komunikasi terkait layanan yang dipilih.</span></div>
+          <button id="submitBooking" class="booking-submit" type="submit"><i data-lucide="calendar-plus-2"></i><span>Daftar Konsultasi</span></button>
+        </form>
+      </article>
+      <a class="status-link" href="status-konsultasi.html"><i data-lucide="search-check"></i>Cek Status Konsultasi</a>
+      <footer class="booking-footer">© 2026 Septino</footer>
+    </section>
+  </main>
+  <script src="config.js"></script>
+  <script src="service.js"></script>
+  <script src="booking.js"></script>
+</body>
+</html>

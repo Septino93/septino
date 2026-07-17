@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Buku | Septino</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="books.css">
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+  <main class="page inner-page">
+    <section class="profile-card wide-card">
+      <div class="page-header">
+        <a class="back-button" href="index.html"><i data-lucide="arrow-left"></i></a>
+        <div>
+          <p class="eyebrow">KARYA SEPTINO</p>
+          <h1>Buku</h1>
+          <p class="page-intro">Koleksi buku yang dapat langsung dipesan.</p>
+        </div>
+      </div>
+
+      <article class="book-card">
+        <div class="book-cover-wrap">
+          <img src="assets/siapa-saja-bisa-jago-coreldraw.png"
+               onerror="this.src='assets/siapa-saja-bisa-jago-coreldraw.svg'"
+               alt="Cover buku Siapa Saja Bisa Jago CorelDraw"
+               class="book-cover">
+        </div>
+
+        <div class="book-content">
+          <span class="badge blue-badge">BUKU TUTORIAL</span>
+          <h2>Siapa Saja Bisa Jago CorelDraw</h2>
+          <p class="author">Oleh <strong>Septino</strong></p>
+          <p class="description">
+            Panduan belajar CorelDraw dari tingkat dasar hingga mahir, dilengkapi
+            pengenalan tools, teknik desain, psikologi warna, tipografi, dan latihan praktik.
+          </p>
+
+          <div class="book-meta">
+            <div><span>Harga</span><strong>Rp70.000</strong></div>
+            <div><span>Halaman</span><strong>215</strong></div>
+            <div><span>Tahun</span><strong>2021</strong></div>
+          </div>
+
+          <a class="primary-button" href="https://tokobukujejak.com/detail/siapa-saja-bisa-jago-coreldraw-F7YOZ.html" target="_blank" rel="noopener">
+            Beli Buku <i data-lucide="shopping-bag"></i>
+          </a>
+          <p class="order-note">Pemesanan melalui Toko Buku Jejak.</p>
+        </div>
+      </article>
+
+      <footer>© <span id="year"></span> Septino</footer>
+    </section>
+  </main>
+  <script src="script.js"></script>
+</body>
+</html>

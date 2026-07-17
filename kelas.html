@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Video Self Learning | Septino</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="kelas.css">
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+  <main class="page inner-page">
+    <section class="profile-card wide-card">
+      <div class="page-header">
+        <a class="back-button" href="index.html"><i data-lucide="arrow-left"></i></a>
+        <div>
+          <p class="eyebrow">BELAJAR BERSAMA SEPTINO</p>
+          <h1>Video Self Learning</h1>
+          <p class="page-intro">Pelajari berbagai materi melalui video yang dapat dipelajari kapan saja sesuai kecepatan Anda sendiri.</p>
+        </div>
+      </div>
+
+      <div class="course-grid">
+        <article class="course-card">
+          <img class="course-poster" src="assets/poster-kelas-coreldraw.webp" alt="Poster Video Self Learning CorelDRAW">
+          <div class="course-icon active-course"><i data-lucide="pen-tool"></i></div>
+          <span class="badge blue-badge">BEST SELLER</span>
+          <h2>CorelDRAW Dari Dasar Hingga Mahir</h2>
+          <p>Materi sistematis untuk pemula yang ingin menguasai desain grafis menggunakan CorelDRAW.</p>
+          <ul>
+            <li>Materi dari dasar hingga mahir</li>
+            <li>Video pembelajaran lengkap</li>
+            <li>Akses kapan saja</li>
+            <li class="premium-benefit"><span class="premium-benefit-icon">🎁</span><strong>Bonus e-book</strong><span class="premium-badge">BONUS</span></li>
+            <li class="premium-benefit"><span class="premium-benefit-icon">💬</span><strong>Group konsultasi</strong><span class="premium-badge">EKSKLUSIF</span></li>
+          </ul>
+          <a class="primary-button" href="https://kelas.kursusdigital.id/beli/coreldraw/" target="_blank" rel="noopener">
+            Daftar Sekarang <i data-lucide="arrow-up-right"></i>
+          </a>
+        </article>
+
+        <article class="course-card coming-soon">
+          <div class="course-icon canva-course"><i data-lucide="palette"></i></div>
+          <span class="badge orange-badge">SEGERA HADIR</span>
+          <h2>Kelas Canva</h2>
+          <p>Belajar Canva dari dasar hingga profesional untuk kebutuhan media sosial, presentasi, promosi, dan konten digital.</p>
+          <ul>
+            <li>Dasar-dasar Canva</li>
+            <li>Desain media sosial</li>
+            <li>Presentasi dan promosi</li>
+            <li>AI Canva dan studi kasus</li>
+          </ul>
+          <button class="disabled-button" disabled>Segera Hadir</button>
+        </article>
+      </div>
+
+      <footer>© <span id="year"></span> Septino</footer>
+    </section>
+  </main>
+  <script src="script.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      if (window.lucide) window.lucide.createIcons();
+    });
+  </script>
+</body>
+</html>
