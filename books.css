@@ -1,0 +1,35 @@
+.book-card{display:grid;grid-template-columns:minmax(220px,.9fr) minmax(0,1.35fr);gap:30px;align-items:center;padding:26px;text-align:left;border-radius:25px;background:#fff;border:1px solid var(--line);box-shadow:0 15px 45px rgba(15,23,42,.08)}
+.book-cover-wrap{display:grid;place-items:center;padding:12px;border-radius:20px;background:linear-gradient(145deg,#f8fafc,#e2e8f0)}
+.book-cover{width:100%;max-width:285px;display:block;border-radius:8px;filter:drop-shadow(0 20px 20px rgba(15,23,42,.18))}
+.book-content h2{margin:14px 0 7px;font-size:clamp(1.55rem,4vw,2.1rem);line-height:1.15}.author,.description,.order-note{color:var(--muted)}.description{line-height:1.75;font-size:.9rem}
+.book-meta{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:20px 0}.book-meta div{padding:12px 10px;text-align:center;border-radius:14px;background:#f8fafc;border:1px solid var(--line)}.book-meta span,.book-meta strong{display:block}.book-meta span{margin-bottom:5px;color:var(--muted);font-size:.7rem}.order-note{text-align:center;font-size:.72rem}
+@media(max-width:680px){.book-card{grid-template-columns:1fr;padding:18px}.book-cover{max-width:320px}}
+
+@media(max-width:700px){
+  .consultation-grid,
+  .course-grid,
+  .book-grid{
+    grid-template-columns:1fr;
+  }
+
+  .consultation-card,
+  .course-card,
+  .book-card{
+    width:100%;
+    max-width:100%;
+  }
+
+  .consultation-card{
+    min-height:102px;
+    padding:14px;
+  }
+
+  .course-cover,
+  .book-cover,
+  .class-poster,
+  .product-image{
+    width:100%;
+    max-width:100%;
+    height:auto;
+  }
+}

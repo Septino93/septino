@@ -1,0 +1,1331 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Simulasi Kebutuhan Asuransi | Septino</title>
+  <meta name="description" content="Kalkulator simulasi kebutuhan asuransi jiwa, penyakit kritis, dan kesehatan.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="simulasi.css">
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+  <main class="page inner-page">
+    <section class="profile-card calculator-container">
+      <div class="page-header">
+        <a class="back-button" href="index.html" aria-label="Kembali">
+          <i data-lucide="arrow-left"></i>
+        </a>
+        <div>
+          <p class="eyebrow">KALKULATOR FINANSIAL</p>
+          <h1>Simulasi Perencanaan Keuangan</h1>
+          <p class="page-intro">
+            Gunakan simulasi ini untuk membantu menghitung kebutuhan perlindungan dan tujuan keuangan Anda.
+          </p>
+        </div>
+      </div>
+      <div class="calculator-tab-groups">
+        <div class="calculator-tab-group protection-tab-group">
+          <span class="calculator-tab-group-title">Perencanaan Asuransi</span>
+          <div class="calculator-tabs" role="tablist">
+            <button class="tab-button active" data-tab="life">
+              <i data-lucide="shield-check"></i>
+              Jiwa
+            </button>
+            <button class="tab-button" data-tab="critical">
+              <i data-lucide="activity"></i>
+              Penyakit Kritis
+            </button>
+            <button class="tab-button" data-tab="health">
+              <i data-lucide="heart-pulse"></i>
+              Kesehatan
+            </button>
+          </div>
+        </div>
+
+        <div class="calculator-tab-group planning-tab-group">
+          <span class="calculator-tab-group-title">Perencanaan Keuangan</span>
+          <div class="calculator-tabs" role="tablist">
+            <button class="tab-button" data-tab="emergency">
+              <i data-lucide="shield-alert"></i>
+              Dana Darurat
+            </button>
+            <button class="tab-button" data-tab="education">
+              <i data-lucide="graduation-cap"></i>
+              Dana Pendidikan
+            </button>
+            <button class="tab-button" data-tab="retirement">
+              <i data-lucide="landmark"></i>
+              Dana Pensiun
+            </button>
+          </div>
+        </div>
+      </div>
+
+<section class="calculator-panel active" id="life-panel">
+        <div class="panel-heading">
+          <span class="panel-icon life-icon"><i data-lucide="shield-check"></i></span>
+          <div>
+            <h2>Kebutuhan Asuransi Jiwa</h2>
+            <p>Hitung estimasi kebutuhan perlindungan jiwa sesuai kondisi keuangan Anda.</p>
+          </div>
+        </div>
+
+        <div class="form-grid">
+          <label>
+            <span>Nama Tertanggung</span>
+            <div class="input-wrap text-input-wrap">
+              <input id="lifeInsuredName" type="text" placeholder="Nama tertanggung" required>
+            </div>
+          </label>
+
+          <label>
+            <span>Usia</span>
+            <div class="input-wrap">
+              <input id="lifeInsuredAge" type="number" min="1" max="100" placeholder="35" required>
+              <span>tahun</span>
+            </div>
+          </label>
+
+          <label>
+            <span>Pengeluaran keluarga per bulan</span>
+            <div class="input-wrap"><span>Rp</span><input id="lifeMonthlyExpense" type="text" inputmode="numeric" placeholder="10.000.000" required></div>
+          </label>
+
+          <label>
+            <span>Instrumen acuan</span>
+            <div class="select-wrap">
+              <select id="lifeInstrument" onchange="syncLifeTax()" required>
+                <option value="Deposito" selected>Deposito</option>
+                <option value="Obligasi">Obligasi</option>
+              </select>
+            </div>
+          </label>
+
+          <label>
+            <span>Asumsi bunga per tahun</span>
+            <div class="select-wrap">
+              <select id="lifeInterestRate" onchange="calculateLifePreview()" required>
+                <option value="1">1%</option>
+                <option value="2">2%</option>
+                <option value="3">3%</option>
+                <option value="4">4%</option>
+                <option value="5" selected>5%</option>
+                <option value="6">6%</option>
+                <option value="7">7%</option>
+              </select>
+            </div>
+          </label>
+
+          <label>
+            <span>PPh bunga</span>
+            <div class="select-wrap">
+              <select id="lifeInterestTax" onchange="calculateLifePreview()" required>
+                <option value="10">10%</option>
+                <option value="20" selected>20%</option>
+              </select>
+            </div>
+          </label>
+
+          <label>
+            <span>Nett bunga</span>
+            <div class="readonly-field" id="lifeNetInterest">4%</div>
+          </label>
+
+          <label>
+            <span>Total UP jiwa yang sudah dimiliki</span>
+            <div class="input-wrap"><span>Rp</span><input id="lifeExistingCoverage" type="text" inputmode="numeric" placeholder="500.000.000" required></div>
+          </label>
+        </div>
+
+        <div class="module-action-row">
+          <button class="calculate-button" onclick="calculateLife()">
+            <i data-lucide="calculator"></i>
+            Hitung Kebutuhan Asuransi Jiwa
+          </button>
+          <button class="export-pdf-button" type="button" onclick="exportModulePdf('life')">
+            <i data-lucide="download"></i>
+            Export PDF
+          </button>
+        </div>
+
+        <div class="result-card" id="lifeResult">
+          <span>Uang pertanggungan jiwa ideal</span>
+          <strong>Rp0</strong>
+          <small>Pengeluaran Tahunan ÷ Nett Bunga</small>
+        </div>
+
+        <div class="life-summary-grid">
+          <div>
+            <span>Pengeluaran Tahunan</span>
+            <strong id="lifeAnnualExpenseResult">Rp0</strong>
+          </div>
+          <div>
+            <span>UP Jiwa Saat Ini</span>
+            <strong id="lifeExistingResult">Rp0</strong>
+          </div>
+          <div>
+            <span>Kekurangan UP</span>
+            <strong id="lifeGapResult">Rp0</strong>
+          </div>
+          <div>
+            <span>Rasio Terpenuhi</span>
+            <strong id="lifeRatioResult">0%</strong>
+          </div>
+        </div>
+
+        <div class="analysis-card" id="lifeAnalysisCard">
+          <div class="analysis-heading">
+            <div>
+              <span>Analisis Financial & Insurance Planner</span>
+              <strong>Mengapa kebutuhan Asuransi Jiwa Anda sebesar ini?</strong>
+            </div>
+          </div>
+          <div class="analysis-text" id="lifeAnalysisText">
+            <p>Isi data dan lakukan perhitungan untuk melihat penjelasan kebutuhan Asuransi Jiwa Anda.</p>
+          </div>
+        </div>
+
+        <div class="status-banner status-gap" id="lifeStatusBanner">
+          Masukkan data untuk melihat hasil.
+        </div>
+      </section>
+
+      <section class="calculator-panel" id="critical-panel">
+        <div class="panel-heading">
+          <span class="panel-icon critical-icon"><i data-lucide="activity"></i></span>
+          <div>
+            <h2>Kebutuhan Penyakit Kritis</h2>
+            <p>Hitung estimasi kebutuhan perlindungan penyakit kritis Anda.</p>
+          </div>
+        </div>
+
+        <div class="form-grid">
+          <label>
+            <span>Nama Tertanggung</span>
+            <div class="input-wrap text-input-wrap">
+              <input id="criticalInsuredName" type="text" placeholder="Nama tertanggung" required>
+            </div>
+          </label>
+
+          <label>
+            <span>Usia</span>
+            <div class="input-wrap">
+              <input id="criticalInsuredAge" type="number" min="1" max="100" placeholder="35" required>
+              <span>tahun</span>
+            </div>
+          </label>
+
+          <label>
+            <span>Penghasilan per bulan</span>
+            <div class="input-wrap">
+              <span>Rp</span>
+              <input id="criticalMonthlyIncome" type="text" inputmode="numeric" placeholder="10.000.000" required>
+            </div>
+          </label>
+
+          <label>
+            <span>Multiplier penghasilan tahunan</span>
+            <div class="select-wrap">
+              <select id="criticalMultiplier" required>
+                <option value="3">3 Tahun</option>
+                <option value="4">4 Tahun</option>
+                <option value="5" selected>5 Tahun (Default)</option>
+                <option value="6">6 Tahun</option>
+                <option value="7">7 Tahun</option>
+              </select>
+            </div>
+          </label>
+
+          <label>
+            <span>Penghasilan tahunan</span>
+            <div class="readonly-field" id="criticalAnnualIncomePreview">Rp0</div>
+          </label>
+
+          <label>
+            <span>Total UP penyakit kritis saat ini</span>
+            <div class="input-wrap">
+              <span>Rp</span>
+              <input id="criticalExistingCoverage" type="text" inputmode="numeric" placeholder="0" required>
+            </div>
+          </label>
+        </div>
+
+        <div class="assumption-box">
+          <i data-lucide="info"></i>
+          <p>
+            Multiplier menunjukkan estimasi berapa tahun penghasilan yang perlu
+            digantikan apabila tertanggung tidak dapat bekerja akibat penyakit kritis.
+          </p>
+        </div>
+
+        <div class="module-action-row">
+          <button class="calculate-button" onclick="calculateCritical()">
+            <i data-lucide="calculator"></i>
+            Hitung Kebutuhan Penyakit Kritis
+          </button>
+          <button class="export-pdf-button" type="button" onclick="exportModulePdf('critical')">
+            <i data-lucide="download"></i>
+            Export PDF
+          </button>
+        </div>
+
+        <div class="result-card" id="criticalResult">
+          <span>UP Penyakit Kritis Ideal</span>
+          <strong>Rp0</strong>
+          <small>Penghasilan Tahunan × Multiplier</small>
+        </div>
+
+        <div class="life-summary-grid">
+          <div>
+            <span>Penghasilan Tahunan</span>
+            <strong id="criticalAnnualIncomeResult">Rp0</strong>
+          </div>
+          <div>
+            <span>UP Saat Ini</span>
+            <strong id="criticalExistingResult">Rp0</strong>
+          </div>
+          <div>
+            <span>Kekurangan UP</span>
+            <strong id="criticalGapResult">Rp0</strong>
+          </div>
+          <div>
+            <span>Rasio Terpenuhi</span>
+            <strong id="criticalRatioResult">0%</strong>
+          </div>
+        </div>
+
+        <div class="analysis-card" id="criticalAnalysisCard">
+          <div class="analysis-heading">
+            <div>
+              <span>Analisis Financial & Insurance Planner</span>
+              <strong>Mengapa kebutuhan Penyakit Kritis Anda sebesar ini?</strong>
+            </div>
+          </div>
+          <div class="analysis-text" id="criticalAnalysisText">
+            <p>Isi data dan lakukan perhitungan untuk melihat penjelasan kebutuhan perlindungan Penyakit Kritis Anda.</p>
+          </div>
+        </div>
+
+        <div class="status-banner status-gap" id="criticalStatusBanner">
+          Masukkan data untuk melihat hasil.
+        </div>
+      </section>
+
+      <section class="calculator-panel" id="health-panel">
+        <div class="panel-heading">
+          <span class="panel-icon health-icon"><i data-lucide="heart-pulse"></i></span>
+          <div>
+            <h2>Perlindungan Asuransi Kesehatan</h2>
+            <p>Lengkapi kuisioner untuk mengetahui kondisi perlindungan kesehatan Anda.</p>
+          </div>
+        </div>
+
+        <div class="questionnaire-section">
+          <div class="questionnaire-title">
+            <span>1</span>
+            <div>
+              <h3>Data Tertanggung</h3>
+              <p>Data dasar untuk analisis perlindungan kesehatan.</p>
+            </div>
+          </div>
+
+          <div class="form-grid">
+            <label>
+              <span>Nama Tertanggung</span>
+              <div class="input-wrap text-input-wrap">
+                <input id="healthInsuredName" type="text" placeholder="Nama tertanggung" required>
+              </div>
+            </label>
+
+            <label>
+              <span>Usia</span>
+              <div class="input-wrap">
+                <input id="healthInsuredAge" type="number" min="1" max="100" placeholder="35" required>
+                <span>tahun</span>
+              </div>
+            </label>
+          </div>
+        </div>
+
+        <div class="questionnaire-section">
+          <div class="questionnaire-title">
+            <span>2</span>
+            <div>
+              <h3>Perlindungan Dasar</h3>
+              <p>Identifikasi perlindungan kesehatan yang sudah dimiliki.</p>
+            </div>
+          </div>
+
+          <div class="form-grid">
+            <label>
+              <span>Status BPJS</span>
+              <div class="select-wrap">
+                <select id="healthBpjsStatus" onchange="calculateHealthQuestionnaire()" required>
+                  <option value="Tidak Ada">Tidak Ada</option>
+                  <option value="Kelas 1">BPJS Kelas 1</option>
+                  <option value="Kelas 2">BPJS Kelas 2</option>
+                  <option value="Kelas 3">BPJS Kelas 3</option>
+                </select>
+              </div>
+            </label>
+
+            <label>
+              <span>Memiliki Asuransi Kesehatan Swasta?</span>
+              <div class="select-wrap">
+                <select id="healthHasPrivateInsurance" onchange="calculateHealthQuestionnaire()" required>
+                  <option value="Tidak">Tidak</option>
+                  <option value="Ya">Ya</option>
+                </select>
+              </div>
+            </label>
+          </div>
+        </div>
+
+        <div class="questionnaire-section">
+          <div class="questionnaire-title">
+            <span>3</span>
+            <div>
+              <h3>Preferensi Perlindungan</h3>
+              <p>Pilih area pertanggungan dan tipe kamar yang diinginkan.</p>
+            </div>
+          </div>
+
+          <div class="form-grid">
+            <label>
+              <span>Coverage Area</span>
+              <div class="select-wrap">
+                <select id="healthCoverageArea" onchange="calculateHealthQuestionnaire()" required>
+                  <option value="">Pilih coverage area</option>
+                  <option value="Asia kecuali Singapore, Hong Kong, dan Jepang">Asia kecuali Singapore, Hong Kong, dan Jepang</option>
+                  <option value="Asia termasuk Singapore, Hong Kong, dan Jepang">Asia termasuk Singapore, Hong Kong, dan Jepang</option>
+                  <option value="Asia + Australia">Asia + Australia</option>
+                  <option value="Seluruh Dunia">Seluruh Dunia</option>
+                </select>
+              </div>
+            </label>
+
+            <label>
+              <span>Tipe Kamar</span>
+              <div class="select-wrap">
+                <select id="healthRoomType" onchange="calculateHealthQuestionnaire()" required>
+                  <option value="">Pilih tipe kamar</option>
+                  <option value="Kamar sesuai tagihan">Kamar sesuai tagihan</option>
+                  <option value="Kamar 1 tempat tidur">Kamar 1 tempat tidur</option>
+                  <option value="Kamar 2 tempat tidur">Kamar 2 tempat tidur</option>
+                  <option value="Kamar kelas standar">Kamar kelas standar</option>
+                </select>
+              </div>
+            </label>
+
+            <label>
+              <span>Fasilitas Cashless</span>
+              <div class="select-wrap">
+                <select id="healthCashless" onchange="calculateHealthQuestionnaire()" required>
+                  <option value="Ya">Ya</option>
+                  <option value="Tidak">Tidak</option>
+                </select>
+              </div>
+            </label>
+          </div>
+        </div>
+
+        <div class="questionnaire-section">
+          <div class="questionnaire-title">
+            <span>4</span>
+            <div>
+              <h3>Deductible</h3>
+              <p>Bagian biaya yang ditanggung sendiri sebelum manfaat asuransi bekerja.</p>
+            </div>
+          </div>
+
+          <div class="form-grid">
+            <label>
+              <span>Menggunakan Deductible?</span>
+              <div class="select-wrap">
+                <select id="healthDeductibleEnabled" onchange="updateHealthConditionalFields()" required>
+                  <option value="Tidak">Tidak</option>
+                  <option value="Ya">Ya</option>
+                </select>
+              </div>
+            </label>
+          </div>
+
+          <div id="healthDeductibleDetail" class="conditional-box hidden">
+            <div class="form-grid">
+              <label>
+                <span>Tipe Deductible</span>
+                <div class="select-wrap">
+                  <select id="healthDeductibleType" onchange="updateHealthConditionalFields()">
+                    <option value="Persentase">Persentase</option>
+                    <option value="Nominal">Nominal</option>
+                  </select>
+                </div>
+              </label>
+
+              <label id="healthDeductiblePercentBox">
+                <span>Persentase Deductible</span>
+                <div class="select-wrap">
+                  <select id="healthDeductiblePercent" onchange="updateHealthConditionalFields()">
+                    <option value="10">10%</option>
+                    <option value="20">20%</option>
+                    <option value="30">30%</option>
+                    <option value="custom">Custom</option>
+                  </select>
+                </div>
+              </label>
+
+              <label id="healthDeductibleCustomPercentBox" class="hidden">
+                <span>Persentase Custom</span>
+                <div class="input-wrap">
+                  <input id="healthDeductibleCustomPercent" type="number" min="0" max="100" step="0.1" placeholder="15">
+                  <span>%</span>
+                </div>
+              </label>
+
+              <label id="healthDeductibleAmountBox" class="hidden">
+                <span>Nominal Deductible</span>
+                <div class="select-wrap">
+                  <select id="healthDeductibleAmount" onchange="updateHealthConditionalFields()">
+                    <option value="5000000">Rp5.000.000</option>
+                    <option value="10000000">Rp10.000.000</option>
+                    <option value="25000000">Rp25.000.000</option>
+                    <option value="custom">Custom</option>
+                  </select>
+                </div>
+              </label>
+
+              <label id="healthDeductibleCustomAmountBox" class="hidden">
+                <span>Nominal Custom</span>
+                <div class="input-wrap">
+                  <span>Rp</span>
+                  <input id="healthDeductibleCustomAmount" type="text" inputmode="numeric" placeholder="15.000.000">
+                </div>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <div class="questionnaire-section">
+          <div class="questionnaire-title">
+            <span>5</span>
+            <div>
+              <h3>Co-payment</h3>
+              <p>Persentase biaya yang tetap dibayar sendiri pada saat klaim.</p>
+            </div>
+          </div>
+
+          <div class="form-grid">
+            <label>
+              <span>Menggunakan Co-payment?</span>
+              <div class="select-wrap">
+                <select id="healthCopaymentEnabled" onchange="updateHealthConditionalFields()" required>
+                  <option value="Tidak">Tidak</option>
+                  <option value="Ya">Ya</option>
+                </select>
+              </div>
+            </label>
+          </div>
+
+          <div id="healthCopaymentDetail" class="conditional-box hidden">
+            <div class="form-grid">
+              <label>
+                <span>Persentase Co-payment</span>
+                <div class="select-wrap">
+                  <select id="healthCopaymentPercent" onchange="updateHealthConditionalFields()">
+                    <option value="10">10%</option>
+                    <option value="20">20%</option>
+                    <option value="30">30%</option>
+                    <option value="custom">Custom</option>
+                  </select>
+                </div>
+              </label>
+
+              <label id="healthCopaymentCustomBox" class="hidden">
+                <span>Persentase Custom</span>
+                <div class="input-wrap">
+                  <input id="healthCopaymentCustomPercent" type="number" min="0" max="100" step="0.1" placeholder="15">
+                  <span>%</span>
+                </div>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <div class="questionnaire-section">
+          <div class="questionnaire-title">
+            <span>6</span>
+            <div>
+              <h3>Riwayat Kesehatan dan Asuransi</h3>
+              <p>Informasi awal yang dapat memengaruhi proses pengajuan.</p>
+            </div>
+          </div>
+
+          <div class="form-grid">
+            <label>
+              <span>Memiliki Riwayat Penyakit?</span>
+              <div class="select-wrap">
+                <select id="healthMedicalHistory" onchange="updateHealthConditionalFields()" required>
+                  <option value="Tidak Ada">Tidak Ada</option>
+                  <option value="Ada">Ada</option>
+                </select>
+              </div>
+            </label>
+
+            <label>
+              <span>Pernah Ditolak atau Ditunda Asuransi?</span>
+              <div class="select-wrap">
+                <select id="healthInsuranceRejection" onchange="updateHealthConditionalFields()" required>
+                  <option value="Tidak">Tidak</option>
+                  <option value="Ya">Ya</option>
+                </select>
+              </div>
+            </label>
+          </div>
+
+          <label id="healthMedicalHistoryNotesBox" class="health-textarea-box hidden">
+            <span>Keterangan Riwayat Penyakit</span>
+            <textarea id="healthMedicalHistoryNotes" rows="4" placeholder="Jelaskan riwayat penyakit, pengobatan, atau kondisi kesehatan"></textarea>
+          </label>
+
+          <label id="healthInsuranceRejectionNotesBox" class="health-textarea-box hidden">
+            <span>Keterangan Penolakan atau Penundaan</span>
+            <textarea id="healthInsuranceRejectionNotes" rows="4" placeholder="Jelaskan riwayat penolakan atau penundaan pengajuan asuransi"></textarea>
+          </label>
+        </div>
+
+        <div class="module-action-row health-export-row">
+          <button class="export-pdf-button full-export-button" type="button" onclick="exportModulePdf('health')">
+            <i data-lucide="download"></i>
+            Export PDF Health Questionnaire
+          </button>
+        </div>
+
+        <div class="health-status-card status-danger" id="healthStatusCard">
+          <span>Ringkasan Analisis Perlindungan</span>
+          <strong id="healthStatusTitle">Prioritas Tinggi</strong>
+          <p id="healthStatusDescription">
+            Belum memiliki BPJS maupun Asuransi Kesehatan Swasta.
+          </p>
+        </div>
+
+        <div class="questionnaire-section health-summary-section">
+          <div class="questionnaire-title">
+            <span>7</span>
+            <div>
+              <h3>Ringkasan Pilihan</h3>
+              <p>Ringkasan kebutuhan perlindungan kesehatan Anda.</p>
+            </div>
+          </div>
+
+          <div class="health-summary-list">
+            <div><span>BPJS</span><strong id="healthSummaryBpjs">-</strong></div>
+            <div><span>Asuransi Swasta</span><strong id="healthSummaryPrivateInsurance">-</strong></div>
+            <div><span>Coverage Area</span><strong id="healthSummaryCoverageArea">-</strong></div>
+            <div><span>Kamar</span><strong id="healthSummaryRoomType">-</strong></div>
+            <div><span>Cashless</span><strong id="healthSummaryCashless">-</strong></div>
+            <div><span>Deductible</span><strong id="healthSummaryDeductible">-</strong></div>
+            <div><span>Co-payment</span><strong id="healthSummaryCopayment">-</strong></div>
+          </div>
+        </div>
+
+        <div class="analysis-card">
+          <div class="analysis-heading">
+            <div>
+              <span>Analisis Financial & Insurance Planner</span>
+              <strong>Bagaimana kondisi perlindungan kesehatan Anda?</strong>
+            </div>
+          </div>
+          <div class="analysis-text" id="healthAnalysisText">
+            <p>Lengkapi kuisioner untuk melihat analisis perlindungan kesehatan.</p>
+          </div>
+        </div>
+
+        <div class="health-important-note">
+          <div class="health-important-note-title">
+            <i data-lucide="shield-alert"></i>
+            <strong>Catatan Penting</strong>
+          </div>
+          <p>
+            Asuransi kesehatan perlu direview secara berkala untuk memastikan manfaat,
+            area pertanggungan, tipe kamar, deductible, co-payment, dan ketentuan polis
+            masih sesuai dengan kebutuhan Anda saat ini.
+          </p>
+        </div>
+      </section>
+
+      <section class="calculator-panel" id="education-panel">
+        <div class="panel-heading">
+          <span class="panel-icon education-icon"><i data-lucide="graduation-cap"></i></span>
+          <div>
+            <h2>Perencanaan Dana Pendidikan</h2>
+            <p>Rencanakan kebutuhan dana pendidikan sesuai target masa depan anak.</p>
+          </div>
+        </div>
+
+        <div class="form-grid">
+          <label>
+            <span>Nama Ayah</span>
+            <div class="input-wrap text-input-wrap">
+              <input id="educationFatherName" type="text" placeholder="Nama ayah" required>
+            </div>
+          </label>
+
+          <label>
+            <span>Nama Ibu</span>
+            <div class="input-wrap text-input-wrap">
+              <input id="educationMotherName" type="text" placeholder="Nama ibu" required>
+            </div>
+          </label>
+
+          <label>
+            <span>Usia Ayah</span>
+            <div class="input-wrap">
+              <input id="educationFatherAge" type="number" min="18" max="80" placeholder="40" required>
+              <span>tahun</span>
+            </div>
+          </label>
+
+          <label>
+            <span>Usia Ibu</span>
+            <div class="input-wrap">
+              <input id="educationMotherAge" type="number" min="18" max="80" placeholder="38" required>
+              <span>tahun</span>
+            </div>
+          </label>
+
+          <label>
+            <span>Usia pensiun yang diinginkan</span>
+            <div class="input-wrap">
+              <input id="educationRetirementAge" type="number" min="1" max="75" value="65" required>
+              <span>tahun</span>
+            </div>
+          </label>
+
+          <label>
+            <span>Nama anak</span>
+            <div class="input-wrap text-input-wrap">
+              <input id="educationChildName" type="text" placeholder="Nama anak" required>
+            </div>
+          </label>
+
+          <label>
+            <span>Target pendidikan</span>
+            <div class="select-wrap">
+              <select id="educationTarget" onchange="syncEducationTarget()" required>
+                <option value="sd" data-age="6">SD Swasta</option>
+                <option value="smp" data-age="12">SMP Swasta</option>
+                <option value="sma" data-age="15">SMA Swasta</option>
+                <option value="s1dn" data-age="18" selected>S1 Dalam Negeri</option>
+                <option value="s1ln" data-age="18">S1 Luar Negeri</option>
+                <option value="kedokteran" data-age="18">Kedokteran</option>
+                <option value="s2dn" data-age="22">S2 Dalam Negeri</option>
+                <option value="s2ln" data-age="22">S2 Luar Negeri</option>
+                <option value="custom" data-age="">Custom</option>
+              </select>
+            </div>
+          </label>
+
+          <label>
+            <span>Usia anak saat ini</span>
+            <div class="input-wrap">
+              <input id="educationCurrentAge" type="number" min="1" max="30" value="5" required>
+              <span>tahun</span>
+            </div>
+          </label>
+
+          <label>
+            <span>Usia masuk pendidikan</span>
+            <div class="input-wrap">
+              <input id="educationEntryAge" type="number" min="1" max="40" value="18" required>
+              <span>tahun</span>
+            </div>
+          </label>
+
+          <label>
+            <span>Biaya pendidikan saat ini</span>
+            <div class="input-wrap">
+              <span>Rp</span>
+              <input id="educationCurrentCost" type="text" inputmode="numeric" placeholder="250.000.000" required>
+            </div>
+          </label>
+
+          <label>
+            <span>Asumsi inflasi pendidikan</span>
+            <div class="input-wrap">
+              <input id="educationInflation" type="number" min="0" max="30" step="0.1" value="10" required>
+              <span>% / tahun</span>
+            </div>
+          </label>
+
+          <label>
+            <span>Dana yang sudah tersedia</span>
+            <div class="input-wrap">
+              <span>Rp</span>
+              <input id="educationExistingFund" type="text" inputmode="numeric" placeholder="0" required>
+            </div>
+          </label>
+
+          <label>
+            <span>Periode persiapan</span>
+            <div class="select-wrap">
+              <select id="educationPreparationYears" onchange="toggleEducationCustomPeriod()" required>
+                <option value="">Lengkapi data dahulu</option>
+              </select>
+            </div>
+            <small class="field-help" id="educationPeriodInfo">
+              Isi usia orang tua, usia anak, dan usia masuk pendidikan.
+            </small>
+          </label>
+
+          <label class="education-custom-period hidden" id="educationCustomPeriodBox">
+            <span>Periode custom</span>
+            <div class="input-wrap">
+              <input id="educationCustomYears" type="number" min="1" step="1" placeholder="Maksimal">
+              <span>tahun</span>
+            </div>
+          </label>
+
+          <label>
+            <span>Strategi pendanaan</span>
+            <div class="select-wrap">
+              <select id="educationReturnRate" required>
+                <option value="0.02">Konservatif (2%)</option>
+                <option value="0.04" selected>Moderat (4%)</option>
+                <option value="0.06">Agresif (6%)</option>
+              </select>
+            </div>
+          </label>
+
+          <label>
+            <span>Sisa waktu menuju pendidikan</span>
+            <div class="readonly-field" id="educationRemainingPreview">13 Tahun</div>
+          </label>
+        </div>
+
+        <div class="assumption-box">
+          <i data-lucide="info"></i>
+          <p>
+            Biaya masa depan dihitung dengan inflasi pendidikan. Estimasi setoran bulanan
+            menggunakan periode persiapan dan asumsi imbal hasil yang dipilih.
+          </p>
+        </div>
+
+        <div class="education-pension-warning hidden" id="educationPensionWarning"></div>
+
+        <div class="module-action-row">
+          <button class="calculate-button" onclick="calculateEducation()">
+            <i data-lucide="calculator"></i>
+            Hitung Kebutuhan Dana Pendidikan
+          </button>
+          <button class="export-pdf-button" type="button" onclick="exportModulePdf('education')">
+            <i data-lucide="download"></i>
+            Export PDF
+          </button>
+        </div>
+
+        <div class="result-card" id="educationResult">
+          <span>Estimasi dana pendidikan saat target dimulai</span>
+          <strong>Rp0</strong>
+          <small>Biaya saat ini yang disesuaikan dengan inflasi pendidikan.</small>
+        </div>
+
+        <div class="life-summary-grid">
+          <div>
+            <span>Sisa Waktu Pendidikan</span>
+            <strong id="educationRemainingResult">0 Tahun</strong>
+          </div>
+          <div>
+            <span>Periode Maksimum</span>
+            <strong id="educationMaxPeriodResult">0 Tahun</strong>
+          </div>
+          <div>
+            <span>Dana Sudah Ada</span>
+            <strong id="educationExistingResult">Rp0</strong>
+          </div>
+          <div>
+            <span>Kekurangan Dana</span>
+            <strong id="educationGapResult">Rp0</strong>
+          </div>
+          <div>
+            <span>Estimasi Setoran</span>
+            <strong id="educationMonthlyResult">Rp0 / bulan</strong>
+          </div>
+        </div>
+
+        <div class="analysis-card">
+          <div class="analysis-heading">
+            <div>
+              <span>Analisis Financial & Insurance Planner</span>
+              <strong>Mengapa dana pendidikan perlu dipersiapkan sejak sekarang?</strong>
+            </div>
+          </div>
+          <div class="analysis-text" id="educationAnalysisText">
+            <p>Masukkan data dan lakukan perhitungan untuk melihat analisis kebutuhan Dana Pendidikan.</p>
+          </div>
+        </div>
+
+        <div class="status-banner status-gap" id="educationStatusBanner">
+          Masukkan data untuk melihat hasil.
+        </div>
+      </section>
+
+
+      <section class="calculator-panel" id="retirement-panel">
+        <div class="panel-heading">
+          <span class="panel-icon retirement-icon"><i data-lucide="landmark"></i></span>
+          <div>
+            <h2>Perencanaan Dana Pensiun</h2>
+            <p>Rencanakan dana pensiun agar tetap nyaman di masa depan.</p>
+          </div>
+        </div>
+
+        <div class="questionnaire-section">
+          <div class="questionnaire-title">
+            <span>1</span>
+            <div>
+              <h3>Target Pensiun</h3>
+              <p>Tentukan usia saat ini dan usia pensiun yang diinginkan.</p>
+            </div>
+          </div>
+
+          <div class="form-grid">
+            <label>
+              <span>Nama</span>
+              <div class="input-wrap text-input-wrap">
+                <input id="retirementClientName" type="text" placeholder="Nama" required>
+              </div>
+            </label>
+
+            <label>
+              <span>Status Pernikahan</span>
+              <div class="select-wrap">
+                <select id="retirementMaritalStatus" onchange="updateRetirementSpouseFields()" required>
+                  <option value="Belum Menikah">Belum Menikah</option>
+                  <option value="Menikah">Menikah</option>
+                </select>
+              </div>
+            </label>
+
+            <label>
+              <span>Usia Saat Ini</span>
+              <div class="input-wrap">
+                <input id="retirementCurrentAge" type="number" min="18" max="80" placeholder="35" required>
+                <span>tahun</span>
+              </div>
+            </label>
+
+            <div id="retirementSpouseFields" class="spouse-fields hidden">
+              <label>
+                <span>Nama Istri</span>
+                <div class="input-wrap text-input-wrap">
+                  <input id="retirementSpouseName" type="text" placeholder="Nama istri">
+                </div>
+              </label>
+
+              <label>
+                <span>Usia Istri</span>
+                <div class="input-wrap">
+                  <input id="retirementSpouseAge" type="number" min="18" max="100" placeholder="33">
+                  <span>tahun</span>
+                </div>
+              </label>
+            </div>
+
+            <label>
+              <span>Usia Pensiun yang Diinginkan</span>
+              <div class="input-wrap">
+                <input id="retirementTargetAge" type="number" min="1" max="80" value="60" required>
+                <span>tahun</span>
+              </div>
+            </label>
+
+            <label>
+              <span>Menuju Pensiun</span>
+              <div class="readonly-field" id="retirementYearsPreview">0 Tahun</div>
+            </label>
+
+            <label>
+              <span>Periode Pengumpulan Dana</span>
+              <div class="select-wrap">
+                <select id="retirementCollectionYears" onchange="toggleRetirementCustomPeriod()" required>
+                  <option value="">Lengkapi usia dahulu</option>
+                </select>
+              </div>
+              <small class="field-help" id="retirementCollectionInfo">
+                Periode maksimal mengikuti sisa waktu menuju usia pensiun.
+              </small>
+            </label>
+
+            <label class="hidden" id="retirementCustomPeriodBox">
+              <span>Periode Custom</span>
+              <div class="input-wrap">
+                <input id="retirementCustomYears" type="number" min="1" step="1" placeholder="Maksimal">
+                <span>tahun</span>
+              </div>
+            </label>
+          </div>
+        </div>
+
+        <div class="questionnaire-section">
+          <div class="questionnaire-title">
+            <span>2</span>
+            <div>
+              <h3>Biaya Hidup Keluarga dan Inflasi</h3>
+              <p>Proyeksikan biaya hidup saat memasuki masa pensiun.</p>
+            </div>
+          </div>
+
+          <div class="form-grid">
+            <label>
+              <span>Biaya Hidup Keluarga per Bulan Saat Ini</span>
+              <div class="input-wrap">
+                <span>Rp</span>
+                <input id="retirementMonthlyExpense" type="text" inputmode="numeric" placeholder="10.000.000" required>
+              </div>
+            </label>
+
+            <label>
+              <span>Tingkat Inflasi</span>
+              <div class="select-wrap">
+                <select id="retirementInflationRate" required>
+                  <option value="2">2%</option>
+                  <option value="2.5">2,5%</option>
+                  <option value="3">3%</option>
+                  <option value="3.5">3,5%</option>
+                  <option value="4">4%</option>
+                  <option value="4.5">4,5%</option>
+                  <option value="5" selected>5% (Default)</option>
+                  <option value="5.5">5,5%</option>
+                  <option value="6">6%</option>
+                  <option value="6.5">6,5%</option>
+                  <option value="7">7%</option>
+                </select>
+              </div>
+            </label>
+
+            <label>
+              <span>Withdrawal Rate (Setelah Pajak)</span>
+              <div class="select-wrap">
+                <select id="retirementWithdrawalRate" required>
+                  <option value="2">2,0%</option>
+                  <option value="2.5">2,5%</option>
+                  <option value="3">3,0%</option>
+                  <option value="3.5">3,5%</option>
+                  <option value="4" selected>4,0% (Default)</option>
+                  <option value="4.5">4,5%</option>
+                  <option value="5">5,0%</option>
+                  <option value="5.5">5,5%</option>
+                  <option value="6">6,0%</option>
+                </select>
+              </div>
+              <small class="field-help">
+                Estimasi persentase dana pensiun yang dapat ditarik setiap tahun setelah pajak dan biaya. Semakin kecil persentasenya, semakin besar dana yang perlu dipersiapkan.
+              </small>
+            </label>
+          </div>
+
+          <div class="assumption-box">
+            <i data-lucide="info"></i>
+            <p>
+              Kebutuhan dana pensiun menggunakan withdrawal rate setelah pajak yang dipilih,
+              agar biaya hidup tahunan saat pensiun dapat dibiayai dari dana yang tersedia.
+            </p>
+          </div>
+        </div>
+
+        <div class="questionnaire-section">
+          <div class="questionnaire-title">
+            <span>3</span>
+            <div>
+              <h3>Dana yang Sudah Dipersiapkan</h3>
+              <p>Masukkan dana pensiun dan setoran bulanan yang sudah berjalan.</p>
+            </div>
+          </div>
+
+          <div class="form-grid">
+            <label>
+              <span>Dana Pensiun Saat Ini</span>
+              <div class="input-wrap">
+                <span>Rp</span>
+                <input id="retirementCurrentFund" type="text" inputmode="numeric" placeholder="0" required>
+              </div>
+            </label>
+
+            <label>
+              <span>Setoran Bulanan Saat Ini</span>
+              <div class="input-wrap">
+                <span>Rp</span>
+                <input id="retirementMonthlyContribution" type="text" inputmode="numeric" placeholder="0" required>
+              </div>
+            </label>
+          </div>
+        </div>
+
+        <div class="education-pension-warning hidden" id="retirementPeriodWarning"></div>
+
+        <div class="module-action-row">
+          <button class="calculate-button" onclick="calculateRetirement()">
+            <i data-lucide="calculator"></i>
+            Hitung Kebutuhan Dana Pensiun
+          </button>
+          <button class="export-pdf-button" type="button" onclick="exportModulePdf('retirement')">
+            <i data-lucide="download"></i>
+            Export PDF
+          </button>
+        </div>
+
+        <div class="result-card" id="retirementResult">
+          <span>Jumlah Dana Pensiun yang Dibutuhkan</span>
+          <strong>Rp0</strong>
+          <small>Pengeluaran tahunan saat pensiun berdasarkan withdrawal rate 4%.</small>
+        </div>
+
+        <div class="retirement-result-grid">
+          <div>
+            <span>Menuju Pensiun</span>
+            <strong id="retirementYearsResult">0 Tahun</strong>
+          </div>
+          <div>
+            <span>Periode Pengumpulan Dana</span>
+            <strong id="retirementCollectionYearsResult">0 Tahun</strong>
+          </div>
+          <div>
+            <span>Biaya Hidup Saat Pensiun</span>
+            <strong id="retirementFutureExpenseResult">Rp0</strong>
+          </div>
+          <div>
+            <span>Biaya Hidup Tahun Pertama</span>
+            <strong id="retirementAnnualExpenseResult">Rp0</strong>
+          </div>
+          <div>
+            <span>Dana Terproyeksi</span>
+            <strong id="retirementProjectedFundResult">Rp0</strong>
+          </div>
+          <div>
+            <span>Kekurangan Dana</span>
+            <strong id="retirementGapResult">Rp0</strong>
+          </div>
+          <div>
+            <span>Setoran Bulanan Rekomendasi</span>
+            <strong id="retirementRecommendedMonthlyResult">Rp0</strong>
+          </div>
+        </div>
+
+        <div class="retirement-readiness-card">
+          <span>Retirement Readiness Score</span>
+          <div>
+            <strong id="retirementReadinessScore">0</strong>
+            <small>/100</small>
+          </div>
+          <p id="retirementReadinessLabel">Belum Siap</p>
+        </div>
+
+        <div class="analysis-card">
+          <div class="analysis-heading">
+            <div>
+              <span>Analisis Financial & Insurance Planner</span>
+              <strong>Seberapa siap dana pensiun Anda?</strong>
+            </div>
+          </div>
+          <div class="analysis-text" id="retirementAnalysisText">
+            <p>Masukkan data dan lakukan perhitungan untuk melihat analisis kesiapan Dana Pensiun.</p>
+          </div>
+        </div>
+
+        <div class="status-banner status-gap" id="retirementStatusBanner">
+          Masukkan data untuk melihat hasil.
+        </div>
+      </section>
+
+
+      <section class="calculator-panel" id="emergency-panel">
+        <div class="panel-heading">
+          <span class="panel-icon emergency-icon"><i data-lucide="shield-alert"></i></span>
+          <div>
+            <h2>Perencanaan Dana Darurat</h2>
+            <p>Hitung kebutuhan cadangan dana untuk menghadapi kondisi yang tidak terduga.</p>
+          </div>
+        </div>
+
+        <div class="questionnaire-section">
+          <div class="questionnaire-title">
+            <span>1</span>
+            <div>
+              <h3>Data Pribadi</h3>
+              <p>Lengkapi data dasar untuk simulasi Dana Darurat.</p>
+            </div>
+          </div>
+
+          <div class="form-grid">
+            <label>
+              <span>Nama</span>
+              <div class="input-wrap text-input-wrap">
+                <input id="emergencyClientName" type="text" placeholder="Nama" required>
+              </div>
+            </label>
+
+            <label>
+              <span>Usia</span>
+              <div class="input-wrap">
+                <input id="emergencyClientAge" type="number" min="18" max="100" placeholder="35" required>
+                <span>tahun</span>
+              </div>
+            </label>
+
+            <label>
+              <span>Status Pernikahan</span>
+              <div class="select-wrap">
+                <select id="emergencyMaritalStatus" onchange="updateEmergencySpouseFields()" required>
+                  <option value="Belum Menikah">Belum Menikah</option>
+                  <option value="Menikah">Menikah</option>
+                </select>
+              </div>
+            </label>
+
+            <div id="emergencySpouseFields" class="spouse-fields hidden">
+              <label>
+                <span>Nama Istri</span>
+                <div class="input-wrap text-input-wrap">
+                  <input id="emergencySpouseName" type="text" placeholder="Nama istri">
+                </div>
+              </label>
+
+              <label>
+                <span>Usia Istri</span>
+                <div class="input-wrap">
+                  <input id="emergencySpouseAge" type="number" min="18" max="100" placeholder="33">
+                  <span>tahun</span>
+                </div>
+              </label>
+
+              <label>
+                <span>Jumlah Anak</span>
+                <div class="input-wrap">
+                  <input id="emergencyChildCount" type="number" min="0" max="20" value="0">
+                  <span>anak</span>
+                </div>
+              </label>
+</div>
+          </div>
+        </div>
+
+        <div class="questionnaire-section">
+          <div class="questionnaire-title">
+            <span>2</span>
+            <div>
+              <h3>Data Keuangan</h3>
+              <p>Masukkan pengeluaran keluarga dan Dana Darurat yang sudah dimiliki.</p>
+            </div>
+          </div>
+
+          <div class="form-grid">
+            <label>
+              <span>Pengeluaran Keluarga per Bulan</span>
+              <div class="input-wrap">
+                <span>Rp</span>
+                <input id="emergencyMonthlyExpense" type="text" inputmode="numeric" placeholder="10.000.000" required>
+              </div>
+            </label>
+
+            <label>
+              <span>Dana Darurat yang Sudah Dimiliki</span>
+              <div class="input-wrap">
+                <span>Rp</span>
+                <input id="emergencyExistingFund" type="text" inputmode="numeric" placeholder="0" required>
+              </div>
+            </label>
+
+            <label>
+              <span>Multiplier Kebutuhan</span>
+              <div class="select-wrap">
+                <select id="emergencyMultiplierSelect" onchange="updateEmergencyMultiplierOptions()">
+                  <option value="3">3 Bulan</option>
+                </select>
+              </div>
+              <div class="readonly-field hidden" id="emergencyMultiplierPreview">3 Bulan</div>
+              <small class="field-help">
+                Belum menikah menggunakan 6 bulan, menikah tanpa anak 9 bulan, dan menikah dengan anak 12 bulan pengeluaran keluarga.
+              </small>
+            </label>
+          </div>
+        </div>
+
+        <div class="module-action-row">
+          <button class="calculate-button" onclick="calculateEmergency()">
+            <i data-lucide="calculator"></i>
+            Hitung Kebutuhan Dana Darurat
+          </button>
+          <button class="export-pdf-button" type="button" onclick="exportModulePdf('emergency')">
+            <i data-lucide="download"></i>
+            Export PDF
+          </button>
+        </div>
+
+        <div class="result-card" id="emergencyResult">
+          <span>Dana Darurat Ideal</span>
+          <strong>Rp0</strong>
+          <small>Pengeluaran keluarga bulanan × multiplier kebutuhan.</small>
+        </div>
+
+        <div class="life-summary-grid">
+          <div>
+            <span>Multiplier</span>
+            <strong id="emergencyMultiplierResult">0 Bulan</strong>
+          </div>
+          <div>
+            <span>Dana Saat Ini</span>
+            <strong id="emergencyExistingResult">Rp0</strong>
+          </div>
+          <div>
+            <span>Kekurangan Dana</span>
+            <strong id="emergencyGapResult">Rp0</strong>
+          </div>
+          <div>
+            <span>Rasio Terpenuhi</span>
+            <strong id="emergencyRatioResult">0%</strong>
+          </div>
+        </div>
+
+        <div class="analysis-card">
+          <div class="analysis-heading">
+            <div>
+              <span>Analisis Financial & Insurance Planner</span>
+              <strong>Seberapa siap Dana Darurat Anda?</strong>
+            </div>
+          </div>
+          <div class="analysis-text" id="emergencyAnalysisText">
+            <p>Masukkan data dan lakukan perhitungan untuk melihat analisis kebutuhan Dana Darurat.</p>
+          </div>
+        </div>
+
+        <div class="status-banner status-gap" id="emergencyStatusBanner">
+          Masukkan data untuk melihat hasil.
+        </div>
+      </section>
+
+      <section class="calculator-note">
+        <i data-lucide="info"></i>
+        <p>
+          Hasil simulasi adalah estimasi awal dan bukan rekomendasi produk. Kebutuhan aktual perlu disesuaikan dengan kondisi keuangan, tanggungan, kesehatan, dan polis yang sudah dimiliki.
+        </p>
+      </section>
+
+      <button class="consult-button whatsapp-button" id="simulationWhatsappButton" type="button" onclick="openSimulationWhatsApp()">
+        <i data-lucide="message-circle"></i>
+        <span id="simulationWhatsappLabel">Konsultasi Premi Asuransi Jiwa</span>
+        <i data-lucide="arrow-up-right"></i>
+      </button>
+
+      <footer>© <span id="year"></span> Septino</footer>
+    </section>
+  </main>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="script.js"></script>
+  <script src="simulasi.js"></script>
+</body>
+</html>

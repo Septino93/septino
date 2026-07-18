@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#17326b">
+  <title>Status Konsultasi | Septino</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="status-konsultasi.css">
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+  <main class="status-page">
+    <header class="status-header">
+      <div class="status-header-inner">
+        <div class="status-topbar">
+          <a class="status-back" href="index.html" aria-label="Kembali" title="Kembali"><i data-lucide="arrow-left"></i></a>
+          <span class="eyebrow"><i data-lucide="clipboard-check"></i>STATUS KONSULTASI</span>
+        </div>
+        <h1>Cek proses konsultasi Anda</h1>
+        <p>Masukkan Nomor Konsultasi beserta email atau WhatsApp yang digunakan saat mendaftar.</p>
+      </div>
+    </header>
+
+    <section class="status-content">
+      <article class="status-card">
+        <form id="statusForm" class="status-form" novalidate>
+          <div class="status-field">
+            <label for="consultationNumber">Nomor Konsultasi</label>
+            <input id="consultationNumber" autocomplete="off" required placeholder="Contoh: KS2607170001">
+          </div>
+          <div class="status-field">
+            <label for="identity">Email atau Nomor WhatsApp</label>
+            <input id="identity" autocomplete="email" required placeholder="Masukkan email atau WhatsApp">
+          </div>
+          <div id="statusAlert" class="status-alert"></div>
+          <button class="status-submit" type="submit"><i data-lucide="search-check"></i><span>Cek Status Konsultasi</span></button>
+        </form>
+
+        <div id="statusResult" class="status-result" hidden>
+          <div class="status-result-head">
+            <span class="status-result-icon"><i data-lucide="clipboard-check"></i></span>
+            <div><small>Nomor Konsultasi</small><strong id="resultNumber">-</strong></div>
+          </div>
+          <dl class="status-details">
+            <div><dt>Nama</dt><dd id="resultName">-</dd></div>
+            <div><dt>Layanan</dt><dd id="resultService">-</dd></div>
+            <div><dt>Status Konsultasi</dt><dd><span id="resultStatus" class="status-badge">-</span></dd></div>
+            <div><dt>Status Pembayaran</dt><dd id="resultPayment">-</dd></div>
+            <div><dt>Biaya</dt><dd id="resultAmount">-</dd></div>
+            <div><dt>Tanggal Pendaftaran</dt><dd id="resultDate">-</dd></div>
+          </dl>
+          <div class="status-actions">
+            <button id="payButton" class="status-action primary" type="button" hidden><i data-lucide="credit-card"></i>Bayar Sekarang</button>
+            <a id="whatsappButton" class="status-action" href="#"><i data-lucide="message-circle"></i>Chat WhatsApp</a>
+          </div>
+        </div>
+      </article>
+      <footer class="status-footer">© 2026 Septino</footer>
+    </section>
+  </main>
+  <script src="config.js"></script>
+  <script src="service.js"></script>
+  <script src="status-konsultasi.js"></script>
+</body>
+</html>
