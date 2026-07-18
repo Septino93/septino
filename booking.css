@@ -112,3 +112,4 @@
     font-size:15px;
   }
 }
+.booking-payment-summary{display:grid;gap:10px;padding:16px;border:1px solid #d5e4fb;border-radius:16px;background:#f5f9ff}.booking-payment-summary[hidden]{display:none}.booking-payment-summary>div{display:flex;align-items:center;justify-content:space-between;gap:16px;color:#53627a;font-size:13px}.booking-payment-summary strong{color:#162742;font-size:15px}.booking-payment-summary .booking-payment-total{padding-top:11px;border-top:1px solid #dbe7f8;font-weight:800}.booking-payment-summary .booking-payment-total strong{font-size:20px;color:#17326b}.booking-payment-summary small{color:#6b7890;line-height:1.5}.booking-alert.info{background:#edf5ff;color:#1c5797;border:1px solid #cfe3fb}
