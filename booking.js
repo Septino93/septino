@@ -94,20 +94,42 @@
       window.snap.pay(token, {
         onSuccess() {
           showAlert('Pembayaran berhasil. Status sedang diperbarui ke CRM.', 'success');
-          setTimeout(() => { location.href = 'status-konsultasi.html'; }, 1200);
+          const q = new URLSearchParams({
+            consultation: result.booking.consultationNumber || '',
+            email: values.email || '',
+            status: 'success'
+          });
+          setTimeout(() => { location.href = `pembayaran-berhasil.html?${q}`; }, 900);
           resolve('success');
         },
         onPending() {
           showAlert('Transaksi dibuat dan masih menunggu pembayaran.', 'info');
-          setTimeout(() => { location.href = 'status-konsultasi.html'; }, 1500);
+          const q = new URLSearchParams({
+            consultation: result.booking.consultationNumber || '',
+            email: values.email || '',
+            status: 'pending'
+          });
+          setTimeout(() => { location.href = `pembayaran-pending.html?${q}`; }, 900);
           resolve('pending');
         },
         onError() {
           showAlert('Pembayaran gagal. Anda dapat mencoba kembali.', 'error');
+          const q = new URLSearchParams({
+            consultation: result.booking.consultationNumber || '',
+            email: values.email || '',
+            status: 'failed'
+          });
+          setTimeout(() => { location.href = `pembayaran-pending.html?${q}`; }, 900);
           resolve('error');
         },
         onClose() {
-          showAlert('Popup pembayaran ditutup. Pendaftaran tetap tersimpan dan pembayaran dapat dicoba kembali.', 'info');
+          showAlert('Popup pembayaran ditutup. Pendaftaran tetap tersimpan.', 'info');
+          const q = new URLSearchParams({
+            consultation: result.booking.consultationNumber || '',
+            email: values.email || '',
+            status: 'closed'
+          });
+          setTimeout(() => { location.href = `pembayaran-pending.html?${q}`; }, 900);
           resolve('closed');
         }
       });
