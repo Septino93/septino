@@ -47,23 +47,42 @@
   }
 
   function toBookingResult(data) {
-    if (!data || data.ok === false) throw new Error(data?.message || "Pendaftaran gagal disimpan.");
-    const item = data.consultation || data.booking || {};
+    // Supabase RPC dengan RETURNS TABLE mengembalikan array.
+    // Ambil baris pertama agar struktur hasil konsisten.
+    const root = Array.isArray(data) ? data[0] : data;
+
+    if (!root || root.ok === false) {
+      throw new Error(root?.message || "Pendaftaran gagal disimpan.");
+    }
+
+    // Mendukung respons berbentuk objek nested maupun baris langsung dari RPC.
+    const item = root.consultation || root.booking || root;
+    const amount = Number(item.amount || 0);
+
     return {
       ok: true,
       mode: "supabase",
-      client: data.client || null,
-      payment: data.payment || null,
-      remainingCredit: data.remainingCredit ?? data.remaining_credit ?? null,
+      client: root.client || null,
+      payment: root.payment || null,
+      remainingCredit:
+        root.remainingCredit ??
+        root.remaining_credit ??
+        item.remainingCredit ??
+        item.remaining_credit ??
+        null,
       booking: {
         id: item.id,
-        consultationNumber: item.consultationNumber || item.consultation_number || item.consultation_no,
+        consultationNumber:
+          item.consultationNumber ||
+          item.consultation_number ||
+          item.consultation_no,
         clientId: item.clientId || item.client_id,
         clientName: item.clientName || item.client_name,
         service: item.service || item.service_slug,
         serviceName: item.serviceName || item.service_name,
-        method: item.method,
-        amount: Number(item.amount || 0),
+        // RPC saat ini tidak mengembalikan method; tentukan dari nominal.
+        method: item.method || (amount > 0 ? "paid" : "free"),
+        amount,
         paymentStatus: item.paymentStatus || item.payment_status,
         status: item.status || item.consultation_status,
         createdAt: item.createdAt || item.created_at
