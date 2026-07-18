@@ -131,21 +131,36 @@
       p_consultation_no: number,
       p_identity: identity.includes("@") ? identity.toLowerCase() : normalizePhone(identity)
     });
-    if (!data || data.found === false) return null;
 
-    const item = data.consultation || data;
+    // Supabase RPC RETURNS TABLE mengembalikan array.
+    const root = Array.isArray(data) ? data[0] : data;
+
+    if (!root || root.found === false) return null;
+
+    // Mendukung hasil nested maupun baris langsung dari RPC.
+    const item = root.consultation || root;
+
     return {
       consultation: {
         id: item.id,
-        consultationNumber: item.consultationNumber || item.consultation_number || item.consultation_no,
+        consultationNumber:
+          item.consultationNumber ||
+          item.consultation_number ||
+          item.consultation_no,
         clientName: item.clientName || item.client_name,
-        serviceName: item.serviceName || item.service_name,
+        serviceName:
+          item.serviceName ||
+          item.service_name ||
+          item.service_name_snapshot,
         status: item.status || item.consultation_status,
         paymentStatus: item.paymentStatus || item.payment_status,
         amount: Number(item.amount || 0),
-        createdAt: item.createdAt || item.created_at
+        createdAt: item.createdAt || item.created_at,
+        scheduledAt: item.scheduledAt || item.scheduled_at,
+        meetingMethod: item.meetingMethod || item.meeting_method,
+        meetingLink: item.meetingLink || item.meeting_link
       },
-      payment: data.payment || null
+      payment: root.payment || null
     };
   }
 
