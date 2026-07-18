@@ -17,7 +17,8 @@ function paymentState(payload) {
 
 function consultationNoFromPayload(payload) {
   if (payload.custom_field1) return String(payload.custom_field1).trim().toUpperCase();
-  const match = String(payload.order_id || '').match(/^PAY-(.+)-(\d{13})$/);
+  const order = String(payload.order_id || '');
+  const match = order.match(/^CF-(.+)-(\d{13})$/);
   return match ? match[1].toUpperCase() : '';
 }
 
@@ -34,39 +35,28 @@ module.exports = async function handler(req, res) {
     const consultationNumber = consultationNoFromPayload(payload);
     if (!consultationNumber) return json(res, 400, { ok: false, message: 'Nomor konsultasi tidak ditemukan.' });
 
-    const consultations = await supabaseRequest(
-      `consultations?consultation_no=eq.${encodeURIComponent(consultationNumber)}&select=id,client_id,consultation_status&limit=1`,
+    const rows = await supabaseRequest(
+      `consultations?consultation_no=eq.${encodeURIComponent(consultationNumber)}&select=id,client_id,amount,payment_status&limit=1`,
       { method: 'GET' }
     );
-    const consultation = Array.isArray(consultations) ? consultations[0] : null;
+    const consultation = Array.isArray(rows) ? rows[0] : null;
     if (!consultation) return json(res, 404, { ok: false, message: 'Konsultasi tidak ditemukan.' });
+
+    const expectedAmount = Math.round(Number(consultation.amount || 0));
+    const notifiedAmount = Math.round(Number(payload.gross_amount || 0));
+    if (!expectedAmount || expectedAmount !== notifiedAmount) {
+      return json(res, 400, { ok: false, message: 'Nominal notifikasi tidak sesuai.' });
+    }
 
     const state = paymentState(payload);
     const consultationStatus = state === 'paid' ? 'waiting_schedule' : 'waiting_payment';
-    const now = new Date().toISOString();
 
-    await supabaseRequest(`consultations?id=eq.${encodeURIComponent(consultation.id)}`, {
-      method: 'PATCH',
-      headers: { Prefer: 'return=minimal' },
-      body: JSON.stringify({
-        payment_status: state,
-        consultation_status: consultationStatus
-      })
-    });
-
-    const payments = await supabaseRequest(
-      `payments?consultation_id=eq.${encodeURIComponent(consultation.id)}&select=id&order=created_at.desc&limit=1`,
-      { method: 'GET' }
-    );
-    const payment = Array.isArray(payments) ? payments[0] : null;
-    if (payment) {
-      await supabaseRequest(`payments?id=eq.${encodeURIComponent(payment.id)}`, {
+    // Idempotent: notifikasi berulang tidak menurunkan transaksi yang sudah paid.
+    if (consultation.payment_status !== 'paid' || state === 'paid') {
+      await supabaseRequest(`consultations?id=eq.${encodeURIComponent(consultation.id)}`, {
         method: 'PATCH',
         headers: { Prefer: 'return=minimal' },
-        body: JSON.stringify({
-          status: state,
-          paid_at: state === 'paid' ? now : null
-        })
+        body: JSON.stringify({ payment_status: state, consultation_status: consultationStatus })
       });
     }
 
@@ -76,11 +66,11 @@ module.exports = async function handler(req, res) {
       body: JSON.stringify({
         client_id: consultation.client_id,
         consultation_id: consultation.id,
-        payment_id: payment?.id || null,
         event_type: 'midtrans_notification',
         description: state === 'paid' ? 'Pembayaran Midtrans berhasil' : `Status pembayaran Midtrans: ${state}`,
         metadata: {
           provider: 'midtrans',
+          environment: 'sandbox',
           order_id: payload.order_id,
           transaction_id: payload.transaction_id,
           transaction_status: payload.transaction_status,

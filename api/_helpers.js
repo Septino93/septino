@@ -59,6 +59,13 @@ async function supabaseRequest(path, options = {}) {
   return data;
 }
 
+function normalizePhone(value) {
+  let phone = String(value || '').replace(/\D/g, '');
+  if (phone.startsWith('0')) phone = `62${phone.slice(1)}`;
+  if (phone.startsWith('8')) phone = `62${phone}`;
+  return phone;
+}
+
 function midtransAuth(serverKey) {
   return `Basic ${Buffer.from(`${serverKey}:`).toString('base64')}`;
 }
@@ -78,5 +85,6 @@ module.exports = {
   readJson,
   supabaseRequest,
   midtransAuth,
-  verifyMidtransSignature
+  verifyMidtransSignature,
+  normalizePhone
 };
