@@ -73,12 +73,10 @@
 
   async function createBooking(payload) {
     const cleaned = {
-      p_name: String(payload.name || "").trim(),
+      p_full_name: String(payload.name || "").trim(),
       p_email: String(payload.email || "").trim().toLowerCase(),
       p_whatsapp: normalizePhone(payload.whatsapp),
-      p_service_slug: String(payload.service || "konsultasi-umum").trim(),
-      p_service_name: String(payload.serviceName || "Konsultasi").trim(),
-      p_simulation_summary: String(payload.simulationSummary || "").trim()
+      p_service_slug: String(payload.service || "konsultasi-umum").trim()
     };
     return toBookingResult(await callRpc("register_consultation", cleaned));
   }
@@ -88,64 +86,23 @@
     const identity = String(identityValue || "").trim();
     if (!number || !identity) return null;
 
-    const responseData = await callRpc("check_consultation_status", {
+    const data = await callRpc("check_consultation_status", {
       p_consultation_no: number,
       p_identity: identity.includes("@") ? identity.toLowerCase() : normalizePhone(identity)
     });
-
-    // RPC PostgreSQL dapat mengembalikan object JSON atau array hasil RETURNS TABLE.
-    const data = Array.isArray(responseData) ? responseData[0] : responseData;
     if (!data || data.found === false) return null;
 
-    const nested = data.consultation || data.booking || null;
-    const item = Array.isArray(nested) ? nested[0] : (nested || data);
-    if (!item) return null;
-
+    const item = data.consultation || data;
     return {
       consultation: {
-        id: item.id ?? item.consultation_id ?? null,
-        consultationNumber:
-          item.consultationNumber ??
-          item.consultation_number ??
-          item.consultation_no ??
-          item.nomor_konsultasi ??
-          number,
-        clientName:
-          item.clientName ??
-          item.client_name ??
-          item.full_name ??
-          item.name ??
-          item.nama ??
-          "-",
-        serviceName:
-          item.serviceName ??
-          item.service_name ??
-          item.service_name_snapshot ??
-          item.service ??
-          item.layanan ??
-          "-",
-        status:
-          item.status ??
-          item.consultation_status ??
-          item.status_konsultasi ??
-          "waiting_schedule",
-        paymentStatus:
-          item.paymentStatus ??
-          item.payment_status ??
-          item.status_pembayaran ??
-          "not_required",
-        amount: Number(
-          item.amount ??
-          item.price ??
-          item.biaya ??
-          0
-        ),
-        createdAt:
-          item.createdAt ??
-          item.created_at ??
-          item.registration_date ??
-          item.tanggal_pendaftaran ??
-          null
+        id: item.id,
+        consultationNumber: item.consultationNumber || item.consultation_number || item.consultation_no,
+        clientName: item.clientName || item.client_name,
+        serviceName: item.serviceName || item.service_name,
+        status: item.status || item.consultation_status,
+        paymentStatus: item.paymentStatus || item.payment_status,
+        amount: Number(item.amount || 0),
+        createdAt: item.createdAt || item.created_at
       },
       payment: data.payment || null
     };
