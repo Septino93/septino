@@ -38,11 +38,7 @@
     badge.className = `status-badge ${item.status === "confirmed" || item.status === "completed" ? item.status : ""}`;
     document.getElementById("resultPayment").textContent = item.paymentStatus === "pending" ? "Menunggu Pembayaran" : "Tidak Diperlukan";
     document.getElementById("resultAmount").textContent = item.amount > 0 ? money(item.amount) : "Gratis";
-    const createdDate = item.createdAt ? new Date(item.createdAt) : null;
-    document.getElementById("resultDate").textContent =
-      createdDate && !Number.isNaN(createdDate.getTime())
-        ? createdDate.toLocaleString("id-ID", { dateStyle: "long", timeStyle: "short" })
-        : "-";
+    document.getElementById("resultDate").textContent = new Date(item.createdAt).toLocaleString("id-ID", { dateStyle: "long", timeStyle: "short" });
 
     const payButton = document.getElementById("payButton");
     payButton.hidden = item.paymentStatus !== "pending";

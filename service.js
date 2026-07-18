@@ -72,13 +72,35 @@
   }
 
   async function createBooking(payload) {
-    const cleaned = {
+    const basePayload = {
       p_full_name: String(payload.name || "").trim(),
       p_email: String(payload.email || "").trim().toLowerCase(),
       p_whatsapp: normalizePhone(payload.whatsapp),
       p_service_slug: String(payload.service || "konsultasi-umum").trim()
     };
-    return toBookingResult(await callRpc("register_consultation", cleaned));
+
+    const simulationSummary = String(payload.simulationSummary || "").trim();
+
+    // Phase 2: kirim snapshot hasil simulasi ke RPC baru.
+    // Fallback ke RPC v1 menjaga website tetap dapat menerima pendaftaran
+    // apabila SQL Phase 2 belum dijalankan.
+    if (simulationSummary) {
+      try {
+        return toBookingResult(await callRpc("register_consultation_v2", {
+          ...basePayload,
+          p_simulation_summary: simulationSummary
+        }));
+      } catch (error) {
+        const message = String(error?.message || "");
+        const functionMissing =
+          message.includes("register_consultation_v2") ||
+          message.includes("schema cache") ||
+          message.includes("Could not find the function");
+        if (!functionMissing) throw error;
+      }
+    }
+
+    return toBookingResult(await callRpc("register_consultation", basePayload));
   }
 
   async function findConsultation(consultationNumberValue, identityValue) {
