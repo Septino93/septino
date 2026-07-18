@@ -6,6 +6,6 @@ window.SEPTINO_APP_CONFIG = Object.freeze({
   consultationPrice: 99000,
   directPaidServices: {
     "review-polis": 499000,
-    "financial-checkup": 500000
+    "financial-checkup": 499000
   }
 });
