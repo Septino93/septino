@@ -176,3 +176,11 @@
   .service-info-list>div{align-items:flex-start}
   .service-info-list dd{max-width:62%}
 }
+
+
+/* Status Layanan V3: tanggal dokumen dan toast download */
+.status-document-copy time{display:block;margin-top:3px;color:#8a95a8;font-size:.72rem;font-style:normal}
+.download-toast{position:fixed;left:50%;bottom:24px;z-index:9999;display:flex;align-items:center;gap:10px;max-width:calc(100vw - 32px);padding:13px 16px;border-radius:14px;background:#17326b;color:#fff;box-shadow:0 18px 45px rgba(13,34,77,.28);font-size:.82rem;font-weight:700;opacity:0;transform:translate(-50%,18px);pointer-events:none;transition:opacity .22s ease,transform .22s ease}
+.download-toast.show{opacity:1;transform:translate(-50%,0)}
+.download-toast svg{width:18px;height:18px;animation:downloadToastSpin .8s linear infinite}
+@keyframes downloadToastSpin{to{transform:rotate(360deg)}}

@@ -91,6 +91,33 @@
     })[char]);
   }
 
+  function formatDocumentDate(value) {
+    if (!value) return "Tanggal belum tersedia";
+    const date = new Date(value);
+    if (Number.isNaN(date.getTime())) return "Tanggal belum tersedia";
+    return date.toLocaleDateString("id-ID", {
+      day: "2-digit",
+      month: "long",
+      year: "numeric"
+    });
+  }
+
+  function showDownloadToast(message = "Dokumen sedang dipersiapkan...") {
+    let toast = document.getElementById("downloadToast");
+    if (!toast) {
+      toast = document.createElement("div");
+      toast.id = "downloadToast";
+      toast.className = "download-toast";
+      toast.innerHTML = '<i data-lucide="loader-circle"></i><span></span>';
+      document.body.appendChild(toast);
+    }
+    toast.querySelector("span").textContent = message;
+    toast.classList.add("show");
+    if (window.lucide) window.lucide.createIcons();
+    clearTimeout(showDownloadToast.timer);
+    showDownloadToast.timer = setTimeout(() => toast.classList.remove("show"), 1800);
+  }
+
   async function loadDocuments(item) {
     const section = document.getElementById("documentSection");
     const list = document.getElementById("documentList");
@@ -120,15 +147,22 @@
 
       section.hidden = false;
       list.innerHTML = documents.map(doc => `
-        <a class="status-document-item" href="${escapeHtml(doc.downloadUrl)}" target="_blank" rel="noopener">
+        <a class="status-document-item" href="${escapeHtml(doc.downloadUrl)}" target="_blank" rel="noopener" data-document-download>
           <span class="status-document-file"><i data-lucide="file-text"></i></span>
           <span class="status-document-copy">
             <strong>${escapeHtml(doc.title || doc.filename || "Dokumen Konsultasi")}</strong>
             <small>${escapeHtml(doc.category || "Laporan")} · PDF</small>
+            <time>${escapeHtml(formatDocumentDate(doc.uploadedAt))}</time>
           </span>
           <span class="status-document-download"><i data-lucide="download"></i></span>
         </a>
       `).join("");
+
+      list.querySelectorAll("[data-document-download]").forEach(link => {
+        link.addEventListener("click", () => {
+          showDownloadToast("Dokumen sedang dipersiapkan...");
+        });
+      });
     } catch (error) {
       console.warn(error);
     } finally {

@@ -55,6 +55,7 @@ module.exports = async function handler(req, res) {
         title: meta.title || meta.filename || "Dokumen Konsultasi",
         category: meta.category || "Laporan",
         filename: meta.filename || "",
+        uploadedAt: row.created_at || null,
         downloadUrl: await signStoragePath(meta.path)
       });
     }
