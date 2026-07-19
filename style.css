@@ -410,3 +410,99 @@ a{
     min-height:108px!important;
   }
 }
+
+/* HOMEPAGE SERVICE GROUPS */
+.homepage-groups{
+  display:grid;
+  gap:18px;
+  margin-top:30px;
+  text-align:left;
+}
+.homepage-group{
+  padding:18px;
+  border-radius:24px;
+  background:rgba(248,250,252,.86);
+  border:1px solid rgba(148,163,184,.18);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.88);
+}
+.homepage-group-heading{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  margin-bottom:14px;
+}
+.homepage-group-icon{
+  width:45px;
+  height:45px;
+  flex:0 0 auto;
+  display:grid;
+  place-items:center;
+  border-radius:15px;
+}
+.homepage-group-icon svg{
+  width:21px;
+  height:21px;
+}
+.finance-group-icon{
+  color:#1d4ed8;
+  background:linear-gradient(135deg,#dbeafe,#e0e7ff);
+}
+.education-group-icon{
+  color:#7c3aed;
+  background:linear-gradient(135deg,#ede9fe,#fae8ff);
+}
+.homepage-group-kicker{
+  margin:0 0 3px;
+  color:#94a3b8;
+  font-size:.62rem;
+  font-weight:800;
+  letter-spacing:.14em;
+}
+.homepage-group-heading h2{
+  margin:0;
+  color:#0f172a;
+  font-size:1rem;
+  line-height:1.3;
+  letter-spacing:-.02em;
+}
+.grouped-button-list{
+  gap:11px;
+  margin-top:0;
+}
+.homepage-group .main-button{
+  padding:13px;
+  border-radius:18px;
+}
+.homepage-group .button-icon{
+  width:48px;
+  height:48px;
+  border-radius:15px;
+}
+.status{
+  color:#0369a1;
+  background:#e0f2fe;
+}
+@media(max-width:480px){
+  .homepage-groups{
+    margin-top:26px;
+    gap:14px;
+  }
+  .homepage-group{
+    padding:14px;
+    border-radius:21px;
+  }
+  .homepage-group-heading{
+    margin-bottom:12px;
+  }
+  .homepage-group .main-button{
+    padding:12px;
+  }
+  .homepage-group .button-icon{
+    width:45px;
+    height:45px;
+  }
+  .homepage-group .button-text strong{
+    font-size:.88rem;
+    line-height:1.35;
+  }
+}
