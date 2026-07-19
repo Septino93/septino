@@ -84,6 +84,58 @@
     }
   }
 
+
+  function escapeHtml(value) {
+    return String(value ?? "").replace(/[&<>'"]/g, char => ({
+      "&": "&amp;", "<": "&lt;", ">": "&gt;", "'": "&#39;", '"': "&quot;"
+    })[char]);
+  }
+
+  async function loadDocuments(item) {
+    const section = document.getElementById("documentSection");
+    const list = document.getElementById("documentList");
+    section.hidden = true;
+    list.innerHTML = "";
+
+    try {
+      const response = await fetch("/api/check-service-documents", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Accept: "application/json" },
+        body: JSON.stringify({
+          consultationNumber: item.consultationNumber,
+          identity: currentIdentity
+        })
+      });
+      const data = await response.json().catch(() => null);
+      if (!response.ok) throw new Error(data?.message || "Dokumen gagal dimuat.");
+
+      const documents = Array.isArray(data?.documents) ? data.documents : [];
+      if (!documents.length) {
+        if (item.status === "completed") {
+          section.hidden = false;
+          list.innerHTML = '<div class="status-document-empty"><i data-lucide="clock-3"></i><span>Dokumen hasil konsultasi belum tersedia. Silakan cek kembali nanti.</span></div>';
+        }
+        return;
+      }
+
+      section.hidden = false;
+      list.innerHTML = documents.map(doc => `
+        <a class="status-document-item" href="${escapeHtml(doc.downloadUrl)}" target="_blank" rel="noopener">
+          <span class="status-document-file"><i data-lucide="file-text"></i></span>
+          <span class="status-document-copy">
+            <strong>${escapeHtml(doc.title || doc.filename || "Dokumen Konsultasi")}</strong>
+            <small>${escapeHtml(doc.category || "Laporan")} · PDF</small>
+          </span>
+          <span class="status-document-download"><i data-lucide="download"></i></span>
+        </a>
+      `).join("");
+    } catch (error) {
+      console.warn(error);
+    } finally {
+      if (window.lucide) window.lucide.createIcons();
+    }
+  }
+
   function render(found) {
     const item = found.consultation;
     const config = window.SEPTINO_APP_CONFIG || {};
@@ -107,6 +159,7 @@
     const text = `Halo Septino, saya ingin menanyakan status konsultasi.\n\nNomor Konsultasi: ${item.consultationNumber}\nNama: ${item.clientName}\nLayanan: ${item.serviceName}`;
     document.getElementById("whatsappButton").href = `https://wa.me/${config.whatsappNumber || "628116946999"}?text=${encodeURIComponent(text)}`;
     document.getElementById("statusResult").hidden = false;
+    loadDocuments(item);
     if (window.lucide) window.lucide.createIcons();
   }
 
