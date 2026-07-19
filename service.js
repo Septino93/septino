@@ -127,23 +127,47 @@
     const identity = String(identityValue || "").trim();
     if (!number || !identity) return null;
 
-    const data = await callRpc("check_consultation_status", {
+    const responseData = await callRpc("check_consultation_status", {
       p_consultation_no: number,
       p_identity: identity.includes("@") ? identity.toLowerCase() : normalizePhone(identity)
     });
+
+    // RETURNS TABLE dari Supabase RPC dapat mengembalikan array.
+    const data = Array.isArray(responseData) ? responseData[0] : responseData;
     if (!data || data.found === false) return null;
 
     const item = data.consultation || data;
     return {
       consultation: {
-        id: item.id,
-        consultationNumber: item.consultationNumber || item.consultation_number || item.consultation_no,
-        clientName: item.clientName || item.client_name,
-        serviceName: item.serviceName || item.service_name,
-        status: item.status || item.consultation_status,
-        paymentStatus: item.paymentStatus || item.payment_status,
+        id: item.id || item.consultation_id,
+        consultationNumber:
+          item.consultationNumber ||
+          item.consultation_number ||
+          item.consultation_no ||
+          number,
+        clientName:
+          item.clientName ||
+          item.client_name ||
+          item.full_name ||
+          "-",
+        serviceName:
+          item.serviceName ||
+          item.service_name ||
+          item.service_name_snapshot ||
+          "-",
+        status:
+          item.status ||
+          item.consultation_status ||
+          "waiting_schedule",
+        paymentStatus:
+          item.paymentStatus ||
+          item.payment_status ||
+          "not_required",
         amount: Number(item.amount || 0),
-        createdAt: item.createdAt || item.created_at
+        createdAt:
+          item.createdAt ||
+          item.created_at ||
+          null
       },
       payment: data.payment || null
     };

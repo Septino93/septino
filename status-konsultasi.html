@@ -40,29 +40,49 @@
           <button class="status-submit" type="submit"><i data-lucide="search-check"></i><span>Cek Status Layanan</span></button>
         </form>
 
-        <div id="statusResult" class="status-result" hidden>
-          <div class="status-result-head">
-            <span class="status-result-icon"><i data-lucide="clipboard-check"></i></span>
-            <div><small>Kode Layanan</small><strong id="resultNumber">-</strong></div>
+        <div id="statusResult" class="status-result status-result-v2" hidden>
+          <div class="service-summary">
+            <div class="service-summary-icon"><i data-lucide="badge-check"></i></div>
+            <div class="service-summary-copy">
+              <small>STATUS LAYANAN</small>
+              <span id="resultStatus" class="status-badge">-</span>
+            </div>
           </div>
-          <dl class="status-details">
-            <div><dt>Nama</dt><dd id="resultName">-</dd></div>
-            <div><dt>Layanan</dt><dd id="resultService">-</dd></div>
-            <div><dt>Status Konsultasi</dt><dd><span id="resultStatus" class="status-badge">-</span></dd></div>
-            <div><dt>Status Pembayaran</dt><dd id="resultPayment">-</dd></div>
-            <div><dt>Biaya</dt><dd id="resultAmount">-</dd></div>
-            <div><dt>Tanggal Pendaftaran</dt><dd id="resultDate">-</dd></div>
+
+          <div class="service-code-card">
+            <span><i data-lucide="ticket-check"></i></span>
+            <div>
+              <small>KODE LAYANAN</small>
+              <strong id="resultNumber">-</strong>
+            </div>
+          </div>
+
+          <dl class="service-info-list">
+            <div>
+              <dt><i data-lucide="user-round"></i>Nama</dt>
+              <dd id="resultName">-</dd>
+            </div>
+            <div>
+              <dt><i data-lucide="briefcase-business"></i>Layanan</dt>
+              <dd id="resultService">-</dd>
+            </div>
           </dl>
+
           <section id="documentSection" class="status-documents" hidden>
             <div class="status-documents-heading">
-              <div><small>HASIL KONSULTASI</small><h2>Dokumen Anda</h2></div>
+              <div>
+                <small>HASIL KONSULTASI</small>
+                <h2>Dokumen Anda</h2>
+              </div>
               <span class="status-documents-icon"><i data-lucide="files"></i></span>
             </div>
             <div id="documentList" class="status-document-list"></div>
           </section>
+
           <div class="status-actions">
-            <button id="payButton" class="status-action primary" type="button" hidden><i data-lucide="credit-card"></i>Bayar Sekarang</button>
-            <a id="whatsappButton" class="status-action" href="#"><i data-lucide="message-circle"></i>Chat WhatsApp</a>
+            <a id="whatsappButton" class="status-action" href="#">
+              <i data-lucide="message-circle"></i>Hubungi Financial Planner
+            </a>
           </div>
         </div>
       </article>

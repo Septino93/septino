@@ -145,19 +145,29 @@
     document.getElementById("resultNumber").textContent = item.consultationNumber || "-";
     document.getElementById("resultName").textContent = item.clientName || "-";
     document.getElementById("resultService").textContent = item.serviceName || "-";
+
     badge.textContent = label;
-    badge.className = `status-badge ${item.status === "confirmed" || item.status === "completed" ? item.status : ""}`;
-    const paymentLabels = { paid: 'Lunas', pending: 'Menunggu Pembayaran', failed: 'Gagal / Kedaluwarsa', not_required: 'Tidak Diperlukan' };
-    document.getElementById("resultPayment").textContent = paymentLabels[item.paymentStatus] || 'Sedang Diproses';
-    document.getElementById("resultAmount").textContent = item.amount > 0 ? money(item.amount) : "Gratis";
-    document.getElementById("resultDate").textContent = new Date(item.createdAt).toLocaleString("id-ID", { dateStyle: "long", timeStyle: "short" });
+    badge.className = `status-badge ${
+      item.status === "completed"
+        ? "completed"
+        : item.status === "confirmed"
+          ? "confirmed"
+          : "processing"
+    }`;
 
-    const payButton = document.getElementById("payButton");
-    payButton.hidden = !(item.amount > 0 && item.paymentStatus !== 'paid');
-    payButton.onclick = () => pay(item);
+    const text =
+      `Halo Septino, saya ingin menanyakan status layanan keuangan.
 
-    const text = `Halo Septino, saya ingin menanyakan status konsultasi.\n\nNomor Konsultasi: ${item.consultationNumber}\nNama: ${item.clientName}\nLayanan: ${item.serviceName}`;
-    document.getElementById("whatsappButton").href = `https://wa.me/${config.whatsappNumber || "628116946999"}?text=${encodeURIComponent(text)}`;
+` +
+      `Kode Layanan: ${item.consultationNumber || "-"}
+` +
+      `Nama: ${item.clientName || "-"}
+` +
+      `Layanan: ${item.serviceName || "-"}`;
+
+    document.getElementById("whatsappButton").href =
+      `https://wa.me/${config.whatsappNumber || "628116946999"}?text=${encodeURIComponent(text)}`;
+
     document.getElementById("statusResult").hidden = false;
     loadDocuments(item);
     if (window.lucide) window.lucide.createIcons();
@@ -179,16 +189,16 @@
       document.getElementById("statusResult").hidden = true;
       const number = document.getElementById("consultationNumber").value.trim();
       const identity = document.getElementById("identity").value.trim();
-      if (!number || !identity) return showError("Lengkapi Nomor Konsultasi dan email atau WhatsApp.");
+      if (!number || !identity) return showError("Lengkapi Kode Layanan dan email atau WhatsApp.");
       currentIdentity = identity;
       const submitButton = event.currentTarget.querySelector('button[type="submit"]');
       if (submitButton) submitButton.disabled = true;
       try {
         const found = await window.SeptinoBookingService.findConsultation(number, identity);
-        if (!found) return showError("Data konsultasi tidak ditemukan. Periksa kembali nomor dan identitas yang dimasukkan.");
+        if (!found) return showError("Data layanan tidak ditemukan. Periksa kembali kode layanan dan identitas yang dimasukkan.");
         render(found);
       } catch (error) {
-        showError(error.message || "Status konsultasi gagal diperiksa. Silakan coba kembali.");
+        showError(error.message || "Status layanan gagal diperiksa. Silakan coba kembali.");
       } finally {
         if (submitButton) submitButton.disabled = false;
       }
