@@ -8,6 +8,12 @@ const {
   normalizePhone
 } = require('./_helpers');
 
+function isProductionMode() {
+  return String(process.env.MIDTRANS_IS_PRODUCTION || '')
+    .trim()
+    .toLowerCase() === 'true';
+}
+
 function cleanText(value, maxLength) {
   return String(value || '').trim().slice(0, maxLength);
 }
@@ -59,6 +65,11 @@ module.exports = async function handler(req, res) {
 
     const orderId = `CF-${consultation.consultation_no}-${Date.now()}`.slice(0, 50);
     const serverKey = getEnv('MIDTRANS_SERVER_KEY');
+    const isProduction = isProductionMode();
+    const midtransBaseUrl = isProduction
+      ? 'https://app.midtrans.com'
+      : 'https://app.sandbox.midtrans.com';
+    const midtransEnvironment = isProduction ? 'production' : 'sandbox';
     const origin = requestOrigin(req);
     const serviceName = cleanText(consultation.service_name_snapshot, 50) || 'Konsultasi';
 
@@ -76,7 +87,7 @@ module.exports = async function handler(req, res) {
     };
     if (origin) transaction.callbacks = { finish: `${origin}/status-konsultasi.html` };
 
-    const response = await fetch('https://app.sandbox.midtrans.com/snap/v1/transactions', {
+    const response = await fetch(`${midtransBaseUrl}/snap/v1/transactions`, {
       method: 'POST',
       headers: {
         Authorization: midtransAuth(serverKey),
@@ -108,7 +119,7 @@ module.exports = async function handler(req, res) {
         consultation_id: consultation.id,
         event_type: 'midtrans_transaction_created',
         description: `Transaksi Midtrans dibuat sebesar Rp${amount.toLocaleString('id-ID')}`,
-        metadata: { provider: 'midtrans', environment: 'sandbox', order_id: orderId, amount }
+        metadata: { provider: 'midtrans', environment: midtransEnvironment, order_id: orderId, amount }
       })
     });
 
