@@ -184,3 +184,5 @@
 .download-toast.show{opacity:1;transform:translate(-50%,0)}
 .download-toast svg{width:18px;height:18px;animation:downloadToastSpin .8s linear infinite}
 @keyframes downloadToastSpin{to{transform:rotate(360deg)}}
+
+.status-pay-button{width:100%;border:0;cursor:pointer;background:linear-gradient(135deg,#17326b,#1f5faa);color:#fff;font:inherit}.status-pay-button:disabled{opacity:.6;cursor:wait}

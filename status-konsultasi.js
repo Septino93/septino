@@ -179,6 +179,14 @@
     document.getElementById("resultNumber").textContent = item.consultationNumber || "-";
     document.getElementById("resultName").textContent = item.clientName || "-";
     document.getElementById("resultService").textContent = item.serviceName || "-";
+    const amountRow=document.getElementById("resultAmountRow");
+    const amountEl=document.getElementById("resultAmount");
+    const payButton=document.getElementById("payButton");
+    const payable=Number(item.amount||0)>0 && item.paymentStatus!=="paid" && item.paymentStatus!=="not_required";
+    amountRow.hidden=Number(item.amount||0)<=0;
+    amountEl.textContent=money(item.amount);
+    payButton.hidden=!payable;
+    payButton.onclick=()=>pay(item);
 
     badge.textContent = label;
     badge.className = `status-badge ${
@@ -209,10 +217,13 @@
 
   document.addEventListener("DOMContentLoaded", () => {
     if (window.lucide) window.lucide.createIcons();
+    const query=new URLSearchParams(location.search);
+    const queryNumber=query.get("consultation");
+    if(queryNumber)document.getElementById("consultationNumber").value=queryNumber;
     try {
       const last = JSON.parse(sessionStorage.getItem("septinoLastConsultation") || "null");
       if (last) {
-        document.getElementById("consultationNumber").value = last.consultationNumber || "";
+        if(!queryNumber)document.getElementById("consultationNumber").value = last.consultationNumber || "";
         document.getElementById("identity").value = last.email || last.whatsapp || "";
       }
     } catch (_) {}
