@@ -34,7 +34,5 @@ const CF_CONFIG = Object.freeze({
   }
 });
 
-// Dua nama ini sengaja diarahkan ke objek yang sama agar kompatibel
-// dengan file lama maupun file baru.
 window.CF_CONFIG = CF_CONFIG;
 window.SEPTINO_APP_CONFIG = CF_CONFIG;
