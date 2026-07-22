@@ -133,7 +133,10 @@
   function render(found) {
     const item = found.consultation;
     const config = window.SEPTINO_APP_CONFIG || {};
-    const label = STATUS_LABELS[item.status] || "Sedang Diproses";
+    const paymentLabels = {pending:"Menunggu Pembayaran",verification:"Menunggu Verifikasi",paid:"Lunas",failed:"Pembayaran Ditolak",not_required:"Tidak Perlu Bayar"};
+    const label = Number(item.amount||0)>0 && item.paymentStatus!=="paid"
+      ? (paymentLabels[item.paymentStatus] || STATUS_LABELS[item.status] || "Sedang Diproses")
+      : (item.paymentStatus==="paid" && item.status==="waiting_schedule" ? "Lunas" : (STATUS_LABELS[item.status] || paymentLabels[item.paymentStatus] || "Sedang Diproses"));
     const badge = document.getElementById("resultStatus");
 
     document.getElementById("resultNumber").textContent = item.consultationNumber || "-";
@@ -142,7 +145,7 @@
     const amountRow=document.getElementById("resultAmountRow");
     const amountEl=document.getElementById("resultAmount");
     const payButton=document.getElementById("payButton");
-    const payable=Number(item.amount||0)>0 && item.paymentStatus!=="paid" && item.paymentStatus!=="not_required";
+    const payable=Number(item.amount||0)>0 && !["paid","not_required","verification"].includes(item.paymentStatus);
     amountRow.hidden=Number(item.amount||0)<=0;
     amountEl.textContent=money(item.amount);
     payButton.hidden=!payable;
