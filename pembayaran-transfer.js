@@ -21,6 +21,7 @@
 
   const no = q.get("consultation") || "-";
   const token = q.get("token") || "";
+  const identity = q.get("identity") || "";
   const amount = Number(q.get("amount") || 0);
 
   consultationNo.textContent = no;
@@ -108,7 +109,7 @@
     event.preventDefault();
     const file = proofFile.files[0];
 
-    if (!token) return alertMsg("Token pembayaran tidak tersedia. Silakan ulangi booking.", "error");
+    if (!token && !identity) return alertMsg("Identitas pembayaran tidak tersedia. Silakan buka kembali link pembayaran dari halaman status.", "error");
     if (!file) return alertMsg("Pilih bukti pembayaran terlebih dahulu.", "error");
     if (file.size > 5 * 1024 * 1024) return alertMsg("Ukuran file maksimal 5 MB.", "error");
 
@@ -122,6 +123,7 @@
         body: JSON.stringify({
           consultationNumber: no,
           publicToken: token,
+          identity,
           filename: file.name,
           mimeType: file.type,
           size: file.size,
