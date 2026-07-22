@@ -12,78 +12,11 @@
     "konsultasi-umum": "Konsultasi Kebutuhan Keuangan"
   };
   const SIM_KEY = "septinoConsultationSimulation";
-  let snapLoader = null;
-
-  const rupiah = value => `Rp${Number(value || 0).toLocaleString("id-ID")}`;
-
-  function showAlert(message, type) {
-    const alert = document.getElementById("bookingAlert");
-    alert.textContent = message;
-    alert.className = `booking-alert is-visible ${type || ""}`;
-  }
-
-  function readSimulation(service) {
-    try {
-      const payload = JSON.parse(sessionStorage.getItem(SIM_KEY) || "null");
-      if (!payload) return "";
-      const expectedPage = `${service}.html`;
-      if (payload.page && payload.page !== expectedPage) return "";
-      return payload.message || payload.summary || "";
-    } catch (_) {
-      return "";
-    }
-  }
-
-  function buildWhatsApp(result, values) {
-    const config = window.SEPTINO_APP_CONFIG || {};
-    const consultation = result.booking || {};
-    const paymentText = consultation.method === "paid"
-      ? `\nStatus: Menunggu pembayaran ${rupiah(consultation.amount)}`
-      : `\nStatus: Menunggu penjadwalan\nSisa konsultasi gratis: ${result.remainingCredit ?? "-"}`;
-    const message = `Halo Septino, saya sudah mendaftar konsultasi.\n\nNama: ${values.name}\nLayanan: ${values.serviceName}${paymentText}\nNomor Konsultasi: ${consultation.consultationNumber || "-"}\n\nMohon dibantu untuk proses selanjutnya.`;
-    return `https://wa.me/${config.whatsappNumber || "628116946999"}?text=${encodeURIComponent(message)}`;
-  }
-
-  async function loadSnap() {
-    if (window.snap) return window.snap;
-    if (snapLoader) return snapLoader;
-    snapLoader = (async () => {
-      const response = await fetch('/api/midtrans-config', { headers: { Accept: 'application/json' } });
-      const config = await response.json().catch(() => null);
-      if (!response.ok || !config?.clientKey) throw new Error(config?.message || 'Konfigurasi Midtrans belum tersedia.');
-      await new Promise((resolve, reject) => {
-        const script = document.createElement('script');
-        script.src = config.snapUrl;
-        script.dataset.clientKey = config.clientKey;
-        script.onload = resolve;
-        script.onerror = () => reject(new Error('Snap Midtrans gagal dimuat.'));
-        document.head.appendChild(script);
-      });
-      if (!window.snap) throw new Error('Snap Midtrans tidak tersedia.');
-      return window.snap;
-    })();
-    return snapLoader;
-  }
-
-  async function createSnapTransaction(result, values) {
-    const response = await fetch('/api/create-midtrans-transaction', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-      body: JSON.stringify({
-        consultationNumber: result.booking.consultationNumber,
-        name: values.name,
-        email: values.email,
-        whatsapp: values.whatsapp
-      })
-    });
-    const data = await response.json().catch(() => null);
-    if (!response.ok || !data?.token) throw new Error(data?.message || 'Transaksi Midtrans gagal dibuat.');
-    return data;
-  }
 
   function rememberConsultation(result, values) {
     sessionStorage.setItem("septinoLastConsultation", JSON.stringify({
       consultationNumber: result.booking.consultationNumber,
+      publicToken: result.booking.publicToken,
       email: values.email,
       whatsapp: values.whatsapp
     }));
@@ -197,12 +130,15 @@
         rememberConsultation(result, values);
 
         if (result.booking.method === 'paid' || Number(result.booking.amount) > 0) {
-          showAlert(`Pendaftaran berhasil. Membuka pembayaran ${rupiah(result.booking.amount)}...`, 'info');
-          await loadSnap();
-          const transaction = await createSnapTransaction(result, values);
-          await openSnapPayment(transaction.token, result, values);
-          submit.disabled = false;
-          submit.querySelector('span').textContent = `Bayar ${rupiah(result.booking.amount)}`;
+          showAlert(`Pendaftaran berhasil. Membuka instruksi transfer ${rupiah(result.booking.amount)}...`, 'info');
+          const q = new URLSearchParams({
+            consultation: result.booking.consultationNumber || '',
+            token: result.booking.publicToken || '',
+            name: values.name || '',
+            service: values.serviceName || '',
+            amount: String(result.booking.amount || 0)
+          });
+          setTimeout(() => { location.href = `pembayaran-transfer.html?${q}`; }, 700);
           return;
         }
 

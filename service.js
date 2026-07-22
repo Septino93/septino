@@ -72,6 +72,7 @@
         null,
       booking: {
         id: item.id,
+        publicToken: item.publicToken || item.public_token || root.publicToken || root.public_token,
         consultationNumber:
           item.consultationNumber ||
           item.consultation_number ||

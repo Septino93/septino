@@ -1,4 +1,10 @@
 window.SEPTINO_APP_CONFIG = Object.freeze({
+  manualPayment: {
+    bankName: "ISI NAMA BANK",
+    accountNumber: "ISI NOMOR REKENING",
+    accountHolder: "ISI NAMA PEMILIK REKENING",
+    paymentDeadlineHours: 24
+  },
   supabaseUrl: "https://jjfnuqwjucqirmrgfjne.supabase.co",
   supabasePublishableKey: "sb_publishable_MyVpSs485ZeYs31LtNo8RQ_5pjRTB79",
   whatsappNumber: "628116946999",
