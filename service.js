@@ -138,6 +138,16 @@
     if (!data || data.found === false) return null;
 
     const item = data.consultation || data;
+    let resolvedPaymentStatus = item.paymentStatus || item.payment_status || "not_required";
+    try {
+      const manualResponse = await fetch("/api/check-manual-payment-status", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Accept: "application/json" },
+        body: JSON.stringify({ consultationNumber: number, identity })
+      });
+      const manualData = await manualResponse.json().catch(() => null);
+      if (manualResponse.ok && manualData?.paymentStatus) resolvedPaymentStatus = manualData.paymentStatus;
+    } catch (_) {}
     return {
       consultation: {
         id: item.id || item.consultation_id,
@@ -160,10 +170,7 @@
           item.status ||
           item.consultation_status ||
           "waiting_schedule",
-        paymentStatus:
-          item.paymentStatus ||
-          item.payment_status ||
-          "not_required",
+        paymentStatus: resolvedPaymentStatus,
         amount: Number(item.amount || 0),
         createdAt:
           item.createdAt ||

@@ -34,6 +34,8 @@ module.exports=async function(req,res){
 
   await supabaseRequest('activity_logs',{method:'POST',headers:{Prefer:'return=minimal'},body:JSON.stringify({client_id:c.client_id,consultation_id:c.id,event_type:'payment_proof_uploaded',description:'Bukti pembayaran diunggah oleh client',metadata:{path,filename:cleanFileName(b.filename),mime_type:mime,size:buf.length,source:'website_manual_transfer'}})});
   await supabaseRequest(`consultations?id=eq.${c.id}`,{method:'PATCH',headers:{Prefer:'return=minimal'},body:JSON.stringify({payment_status:'verification',consultation_status:'waiting_payment'})});
+  const payments=await supabaseRequest(`payments?select=id&consultation_id=eq.${c.id}&limit=1`);
+  if(payments?.[0]?.id)await supabaseRequest(`payments?id=eq.${payments[0].id}`,{method:'PATCH',headers:{Prefer:'return=minimal'},body:JSON.stringify({status:'verification',provider:'manual_transfer'})});
   return json(res,200,{ok:true,message:'Bukti pembayaran berhasil dikirim dan sedang menunggu verifikasi admin.'});
  }catch(e){return json(res,500,{ok:false,message:e.message||'Gagal mengunggah bukti pembayaran.'})}
 };
