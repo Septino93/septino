@@ -1,1 +1,147 @@
-(()=>{"use strict";const q=new URLSearchParams(location.search),cfg=(window.SEPTINO_APP_CONFIG||{}).manualPayment||{},rupiah=v=>new Intl.NumberFormat("id-ID",{style:"currency",currency:"IDR",maximumFractionDigits:0}).format(Number(v||0));const no=q.get("consultation")||"-",token=q.get("token")||"",amount=Number(q.get("amount")||0);consultationNo.textContent=no;clientName.textContent=q.get("name")||"-";serviceName.textContent=q.get("service")||"-";totalAmount.textContent=rupiah(amount);bankName.textContent=cfg.bankName||"-";accountNumber.textContent=cfg.accountNumber||"-";accountHolder.textContent=cfg.accountHolder||"-";const incomplete=!cfg.bankName||!cfg.accountNumber||String(cfg.accountNumber).includes("ISI ")||!cfg.accountHolder||String(cfg.bankName).includes("ISI ");configWarning.hidden=!incomplete;copyAccount.onclick=async()=>{if(incomplete)return;await navigator.clipboard.writeText(cfg.accountNumber);copyAccount.textContent="Tersalin";setTimeout(()=>copyAccount.innerHTML='<i data-lucide="copy"></i> Salin',1500)};proofFile.onchange=()=>{fileLabel.textContent=proofFile.files[0]?.name||"Pilih bukti pembayaran"};function alertMsg(m,t){payAlert.hidden=false;payAlert.textContent=m;payAlert.className=`pay-alert ${t}`}function fileData(file){return new Promise((res,rej)=>{const r=new FileReader;r.onload=()=>res(String(r.result).split(",")[1]);r.onerror=()=>rej(new Error("File gagal dibaca."));r.readAsDataURL(file)})}proofForm.onsubmit=async e=>{e.preventDefault();const f=proofFile.files[0];if(!token)return alertMsg("Token pembayaran tidak tersedia. Silakan ulangi booking.","error");if(!f)return alertMsg("Pilih bukti pembayaran terlebih dahulu.","error");if(f.size>5*1024*1024)return alertMsg("Ukuran file maksimal 5 MB.","error");uploadBtn.disabled=true;uploadBtn.textContent="Mengunggah...";try{const r=await fetch("/api/upload-payment-proof",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({consultationNumber:no,publicToken:token,filename:f.name,mimeType:f.type,size:f.size,data:await fileData(f)})});const d=await r.json().catch(()=>null);if(!r.ok)throw new Error(d?.message||"Upload gagal.");alertMsg("Bukti pembayaran berhasil dikirim. Admin akan melakukan verifikasi.","success");paymentStatus.textContent="Bukti Sudah Dikirim";uploadBtn.textContent="Bukti Berhasil Dikirim";proofFile.disabled=true}catch(err){alertMsg(err.message||"Upload gagal.","error");uploadBtn.disabled=false;uploadBtn.textContent="Kirim Bukti Pembayaran"}};if(window.lucide)lucide.createIcons()})();
+(() => {
+  "use strict";
+
+  const q = new URLSearchParams(location.search);
+  const appConfig = window.SEPTINO_APP_CONFIG || window.CF_CONFIG || {};
+  const paymentConfig = appConfig.payments || {};
+  const banks = Array.isArray(paymentConfig.banks)
+    ? paymentConfig.banks.filter(bank => bank && bank.isActive !== false)
+    : [];
+
+  const rupiah = value => new Intl.NumberFormat("id-ID", {
+    style: "currency",
+    currency: "IDR",
+    maximumFractionDigits: 0
+  }).format(Number(value || 0));
+
+  const formatAccount = value => String(value || "")
+    .replace(/\D/g, "")
+    .replace(/(.{4})/g, "$1 ")
+    .trim();
+
+  const no = q.get("consultation") || "-";
+  const token = q.get("token") || "";
+  const amount = Number(q.get("amount") || 0);
+
+  consultationNo.textContent = no;
+  clientName.textContent = q.get("name") || "-";
+  serviceName.textContent = q.get("service") || "-";
+  totalAmount.textContent = rupiah(amount);
+
+  function renderBanks() {
+    bankList.innerHTML = "";
+    const validBanks = banks.filter(bank =>
+      bank.bankName && bank.accountNumber && bank.accountHolder &&
+      !String(bank.bankName).includes("ISI ") &&
+      !String(bank.accountNumber).includes("ISI ")
+    );
+
+    configWarning.hidden = validBanks.length > 0;
+
+    validBanks
+      .sort((a, b) => Number(Boolean(b.isDefault)) - Number(Boolean(a.isDefault)))
+      .forEach(bank => {
+        const card = document.createElement("article");
+        card.className = `bank-account${bank.isDefault ? " is-default" : ""}`;
+        card.innerHTML = `
+          <div class="bank-account-title">
+            <div>
+              <small>${bank.isDefault ? "REKENING UTAMA" : "REKENING TRANSFER"}</small>
+              <h3>${bank.bankName}</h3>
+            </div>
+          </div>
+          <div class="account-row">
+            <div>
+              <small>Nomor rekening</small>
+              <strong>${formatAccount(bank.accountNumber)}</strong>
+            </div>
+            <button type="button" class="copy-bank" data-account="${String(bank.accountNumber).replace(/\D/g, "")}">
+              <i data-lucide="copy"></i> Salin
+            </button>
+          </div>
+          <div class="holder">
+            <small>Atas nama</small>
+            <strong>${bank.accountHolder}</strong>
+          </div>`;
+        bankList.appendChild(card);
+      });
+
+    bankList.addEventListener("click", async event => {
+      const button = event.target.closest(".copy-bank");
+      if (!button) return;
+      try {
+        await navigator.clipboard.writeText(button.dataset.account || "");
+        const original = button.innerHTML;
+        button.textContent = "Tersalin";
+        setTimeout(() => {
+          button.innerHTML = original;
+          if (window.lucide) window.lucide.createIcons();
+        }, 1500);
+      } catch (_) {
+        alertMsg("Nomor rekening gagal disalin. Silakan salin secara manual.", "error");
+      }
+    }, { once: true });
+  }
+
+  renderBanks();
+
+  proofFile.onchange = () => {
+    fileLabel.textContent = proofFile.files[0]?.name || "Pilih bukti pembayaran";
+  };
+
+  function alertMsg(message, type) {
+    payAlert.hidden = false;
+    payAlert.textContent = message;
+    payAlert.className = `pay-alert ${type}`;
+  }
+
+  function fileData(file) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(String(reader.result).split(",")[1]);
+      reader.onerror = () => reject(new Error("File gagal dibaca."));
+      reader.readAsDataURL(file);
+    });
+  }
+
+  proofForm.onsubmit = async event => {
+    event.preventDefault();
+    const file = proofFile.files[0];
+
+    if (!token) return alertMsg("Token pembayaran tidak tersedia. Silakan ulangi booking.", "error");
+    if (!file) return alertMsg("Pilih bukti pembayaran terlebih dahulu.", "error");
+    if (file.size > 5 * 1024 * 1024) return alertMsg("Ukuran file maksimal 5 MB.", "error");
+
+    uploadBtn.disabled = true;
+    uploadBtn.textContent = "Mengunggah...";
+
+    try {
+      const response = await fetch("/api/upload-payment-proof", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          consultationNumber: no,
+          publicToken: token,
+          filename: file.name,
+          mimeType: file.type,
+          size: file.size,
+          data: await fileData(file)
+        })
+      });
+
+      const data = await response.json().catch(() => null);
+      if (!response.ok) throw new Error(data?.message || "Upload gagal.");
+
+      alertMsg("Bukti pembayaran berhasil dikirim. Admin akan melakukan verifikasi.", "success");
+      paymentStatus.textContent = "Bukti Sudah Dikirim";
+      uploadBtn.textContent = "Bukti Berhasil Dikirim";
+      proofFile.disabled = true;
+    } catch (error) {
+      alertMsg(error.message || "Upload gagal.", "error");
+      uploadBtn.disabled = false;
+      uploadBtn.textContent = "Kirim Bukti Pembayaran";
+    }
+  };
+
+  if (window.lucide) window.lucide.createIcons();
+})();
